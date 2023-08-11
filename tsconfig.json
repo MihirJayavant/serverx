@@ -1,0 +1,14 @@
+{
+  "compilerOptions": {
+    "incremental": true,
+    "target": "ES2018",
+    "lib": ["ES2018"],
+    "module": "commonjs",
+    "strict": true,
+    "skipLibCheck": true,
+    "baseUrl": "./src",
+    "outDir": "./dist"
+  },
+  "include": ["src/**/*"],
+  "exclude": ["src/mocks/**/*", "src/**/*.spec.ts"]
+}

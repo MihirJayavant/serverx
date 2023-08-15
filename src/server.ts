@@ -1,10 +1,10 @@
-import * as express from 'express'
+import Koa from 'koa'
 
 export class Server {
-  app: express.Express
+  app: Koa
 
   constructor() {
-    this.app = express()
+    this.app = new Koa()
   }
 
   start(port: number) {

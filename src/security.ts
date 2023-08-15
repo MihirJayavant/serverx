@@ -2,7 +2,7 @@ import helmet, { HelmetOptions } from 'helmet'
 import { Context, Next } from 'koa'
 import { promisify } from 'util'
 
-function koaHelmet(options: Readonly<HelmetOptions>) {
+export function koaHelmet(options?: Readonly<HelmetOptions>) {
   const helmetPromise = promisify(helmet.apply(null, [options]))
 
   const middleware = (ctx: Context, next: Next) => helmetPromise(ctx.req, ctx.res).then(next)
@@ -23,5 +23,3 @@ function koaHelmet(options: Readonly<HelmetOptions>) {
 //     koafn[helmetMethod][methodExports] = hel[helmetMethod][methodExports]
 //   })
 // })
-
-module.exports = koaHelmet

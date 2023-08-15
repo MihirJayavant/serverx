@@ -1,6 +1,7 @@
 import { Context } from 'koa'
 import { ObjectSchema } from 'joi'
 import { IResult, isSucess } from './result'
+import { Logger } from './logger'
 
 export interface IHandler<T, U> {
   run(payload: T): Promise<IResult<U>>
@@ -24,6 +25,6 @@ export async function mediator<T>(config: { handler: (data: T) => Promise<IResul
       config.ctx.body = { error: result.error }
     }
   } catch (error: any) {
-    console.error(`Error in Handler `, error.stack ?? error)
+    Logger.error(`Error in Handler `, error.stack ?? error)
   }
 }

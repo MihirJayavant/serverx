@@ -3,6 +3,7 @@ import { koaHelmet } from './security'
 import { HelmetOptions } from 'helmet'
 import cors from '@koa/cors'
 import { Logger } from './logger'
+import { bodyParser } from '@koa/bodyparser'
 
 export class Server {
   app: Koa
@@ -16,6 +17,7 @@ export class Server {
     this.addResponseTime()
     this.app.use(cors())
     this.app.use(koaHelmet(config?.helmet))
+    this.app.use(bodyParser())
   }
 
   addLogs() {

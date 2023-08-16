@@ -1,18 +1,6 @@
 {
+  "extends": "./configs/tsconfig.base.json",
   "compilerOptions": {
-    "incremental": true,
-    "target": "ES2018",
-    "lib": ["ES2018"],
-    "module": "CommonJS",
-    "allowSyntheticDefaultImports": true,
-    "esModuleInterop": true,
-    "moduleResolution": "Node",
-    "strict": true,
-    "skipLibCheck": true,
-    "declaration": true,
-    "baseUrl": "./",
-    "outDir": "./dist"
-  },
-  "include": ["src/**/*"],
-  "exclude": ["src/mocks/**/*", "src/**/*.spec.ts"]
+    "outDir": "../lib"
+  }
 }

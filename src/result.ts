@@ -23,22 +23,29 @@ export type ErrorStatusCode =
     | StatusCode.NotFound
     | StatusCode.Unauthorized;
 
-export interface ISuccess<T> {
+export interface SuccessResult<T> {
     status: number;
     data: T;
 }
 
-export interface IError {
+export interface ErrorResult {
     status: number;
-    error: string;
+    error: string | string[];
 }
 
-export type IResult<T> = ISuccess<T> | IError;
+export type Result<T> = SuccessResult<T> | ErrorResult;
 
-export function isSucess<T>(result: IResult<T>): result is ISuccess<T> {
+export function isSucess<T>(result: Result<T>): result is SuccessResult<T> {
     return result.status >= 200 && result.status <= 400;
 }
 
-export function isError<T>(result: IResult<T>): result is IError {
+export function isError<T>(result: Result<T>): result is ErrorResult {
     return !isSucess(result);
+}
+
+export function internalServerError(error?: string | string[]): ErrorResult {
+    return {
+        status: 500,
+        error: error ?? "Internal Server Error",
+    };
 }

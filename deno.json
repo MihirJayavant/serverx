@@ -3,6 +3,6 @@
     "dev": "deno run --watch main.ts"
   },
   "imports": {
-    "@hono/hono": "jsr:@hono/hono@^4.4.6"
+    "@hono/hono": "jsr:@hono/hono@^4.5.5"
   }
 }

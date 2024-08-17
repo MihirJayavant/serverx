@@ -1,4 +1,4 @@
-import { Hono } from "@hono/hono";
+import { Context, Hono } from "@hono/hono";
 
 export type Config = {
     basePath?: string;
@@ -12,18 +12,28 @@ export enum HttpMethod {
     DELETE = "DELETE",
 }
 
-export type Action = {
+export type ActionContext = {
+    body: any;
+    query: any;
+    params: any;
+    context: Context;
+};
+
+export type Action<T> = {
     method: HttpMethod;
     path: string;
-    handler: () => Promise<void>;
+    handler: (context: ActionContext) => Promise<T>;
 };
 
 export class Router {
-    readonly #router = new Hono();
+    readonly #router;
 
     constructor(config?: Config) {
         if (config?.basePath) {
-            this.#router.basePath(config.basePath);
+            console.log(config);
+            this.#router = new Hono().basePath(config.basePath);
+        } else {
+            this.#router = new Hono();
         }
     }
 
@@ -35,23 +45,41 @@ export class Router {
         this.#router.route("/", router.nativeRouter);
     }
 
-    addAction(action: Action) {
-        switch (action.method) {
+    addAction<T extends object>(action: Action<T>) {
+        const method = this.getMethod(action.method);
+        method(action.path, this.actionHandler(action.handler));
+    }
+
+    private getMethod(type: HttpMethod) {
+        switch (type) {
             case HttpMethod.GET:
-                this.#router.get(action.path, action.handler);
-                break;
+                return this.#router.get;
             case HttpMethod.POST:
-                this.#router.post(action.path, action.handler);
-                break;
+                return this.#router.post;
             case HttpMethod.PUT:
-                this.#router.put(action.path, action.handler);
-                break;
+                return this.#router.put;
             case HttpMethod.PATCH:
-                this.#router.patch(action.path, action.handler);
-                break;
+                return this.#router.patch;
             case HttpMethod.DELETE:
-                this.#router.delete(action.path, action.handler);
-                break;
+                return this.#router.delete;
         }
+    }
+
+    private actionHandler<T extends object>(
+        handler: (context: ActionContext) => Promise<T>,
+    ) {
+        return async (c: Context) => {
+            // const body = await c.req.json();
+            const body = {};
+            const params = c.req.param();
+            const query = c.req.query();
+
+            const result = await handler({ body, params, query, context: c });
+            console.log(result);
+            return c.json({
+                ok: true,
+                message: "Hello Hono!",
+            });
+        };
     }
 }

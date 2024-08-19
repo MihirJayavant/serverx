@@ -19,7 +19,7 @@ export type ActionContext = {
     context: Context;
 };
 
-export type Action<T> = {
+export type Action<T extends object> = {
     method: HttpMethod;
     path: string;
     handler: (context: ActionContext) => Promise<T>;
@@ -30,7 +30,6 @@ export class Router {
 
     constructor(config?: Config) {
         if (config?.basePath) {
-            console.log(config);
             this.#router = new Hono().basePath(config.basePath);
         } else {
             this.#router = new Hono();
@@ -68,18 +67,16 @@ export class Router {
     private actionHandler<T extends object>(
         handler: (context: ActionContext) => Promise<T>,
     ) {
-        return async (c: Context) => {
-            // const body = await c.req.json();
-            const body = {};
+        return async (c: Context<any, any, any>) => {
+            let body;
+            if (c.req.valid("json")) {
+                body = await c.req.json();
+            }
             const params = c.req.param();
             const query = c.req.query();
 
             const result = await handler({ body, params, query, context: c });
-            console.log(result);
-            return c.json({
-                ok: true,
-                message: "Hello Hono!",
-            });
+            return c.json(result);
         };
     }
 }

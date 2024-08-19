@@ -5,7 +5,7 @@ export const path = "/";
 export const method = HttpMethod.GET;
 
 export function handler() {
-    return {
+    return Promise.resolve({
         name: "James Turner",
-    };
+    });
 }

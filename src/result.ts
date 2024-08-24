@@ -1,51 +1,52 @@
-export enum StatusCode {
-    Ok = 200,
-    Created = 201,
-    NoContent = 204,
-    BadRequest = 400,
-    Unauthorized = 401,
-    Forbidden = 403,
-    NotFound = 404,
-    Conflict = 409,
-    InternalServerError = 500,
-}
+export const statusCodes = {
+    Ok: 200,
+    Created: 201,
+    NoContent: 204,
+    BadRequest: 400,
+    Unauthorized: 401,
+    Forbidden: 403,
+    NotFound: 404,
+    Conflict: 409,
+    InternalServerError: 500,
+} as const;
 
-export type SuccessStatusCode =
-    | StatusCode.Ok
-    | StatusCode.Created
-    | StatusCode.NoContent;
+export type StatusCode = (typeof statusCodes)[keyof typeof statusCodes];
 
-export type ErrorStatusCode =
-    | StatusCode.BadRequest
-    | StatusCode.Conflict
-    | StatusCode.Forbidden
-    | StatusCode.InternalServerError
-    | StatusCode.NotFound
-    | StatusCode.Unauthorized;
+export type SuccessStatusCode = 200 | 201 | 204;
 
-export interface SuccessResult<T> {
+export type ErrorStatusCode = Exclude<StatusCode, SuccessStatusCode>;
+
+export type SuccessResult<T> = {
     status: number;
     data: T;
-}
+};
 
-export interface ErrorResult {
+export type ErrorResult<T> = {
     status: number;
-    error: string | string[];
-}
+    error: T;
+};
 
-export type Result<T> = SuccessResult<T> | ErrorResult;
+export type Result<TSuccess, TError> =
+    | SuccessResult<TSuccess>
+    | ErrorResult<TError>;
 
-export function isSucess<T>(result: Result<T>): result is SuccessResult<T> {
+export function isSucess<TSuccess, TError>(
+    result: Result<TSuccess, TError>,
+): result is SuccessResult<TSuccess> {
     return result.status >= 200 && result.status <= 400;
 }
 
-export function isError<T>(result: Result<T>): result is ErrorResult {
+export function isError<TSuccess, TError>(
+    result: Result<TSuccess, TError>,
+): result is ErrorResult<TError> {
     return !isSucess(result);
 }
 
-export function internalServerError(error?: string | string[]): ErrorResult {
+export function internalServerError<TError>(
+    error: TError,
+): ErrorResult<TError> {
     return {
         status: 500,
-        error: error ?? "Internal Server Error",
+        error,
     };
 }

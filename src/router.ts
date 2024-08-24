@@ -4,25 +4,30 @@ export type Config = {
     basePath?: string;
 };
 
-export enum HttpMethod {
-    GET = "GET",
-    POST = "POST",
-    PUT = "PUT",
-    PATCH = "PATCH",
-    DELETE = "DELETE",
-}
+export const httpMethods = {
+    GET: "GET",
+    POST: "POST",
+    PUT: "PUT",
+    PATCH: "PATCH",
+    DELETE: "DELETE",
+} as const;
 
-export type ActionContext = {
-    body: any;
-    query: any;
-    params: any;
-    context: Context;
-};
+export type HttpMethod = keyof typeof httpMethods;
 
-export type Action<T extends object> = {
+export type ActionContext<TBody = unknown, TQuery = unknown, TParam = unknown> =
+    {
+        body: TBody;
+        query: TQuery;
+        params: TParam;
+        context: Context;
+    };
+
+export type ActionBodyContext<TBody> = ActionContext<TBody>;
+
+export type Action<TResult extends object> = {
     method: HttpMethod;
     path: string;
-    handler: (context: ActionContext) => Promise<T>;
+    handler: (context: ActionContext) => Promise<TResult>;
 };
 
 export class Router {
@@ -51,15 +56,15 @@ export class Router {
 
     private getMethod(type: HttpMethod) {
         switch (type) {
-            case HttpMethod.GET:
+            case "GET":
                 return this.#router.get;
-            case HttpMethod.POST:
+            case "POST":
                 return this.#router.post;
-            case HttpMethod.PUT:
+            case "PUT":
                 return this.#router.put;
-            case HttpMethod.PATCH:
+            case "PATCH":
                 return this.#router.patch;
-            case HttpMethod.DELETE:
+            case "DELETE":
                 return this.#router.delete;
         }
     }
@@ -67,6 +72,7 @@ export class Router {
     private actionHandler<T extends object>(
         handler: (context: ActionContext) => Promise<T>,
     ) {
+        // deno-lint-ignore no-explicit-any
         return async (c: Context<any, any, any>) => {
             let body;
             if (c.req.valid("json")) {

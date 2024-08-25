@@ -65,14 +65,16 @@ export class Router {
             ...p,
             path: `${this.config?.basePath ?? ""}${p.path}`,
         }));
-        this.#apiDocs.concat(docs);
+        this.#apiDocs.push(...docs);
     }
 
     addAction<T extends object>(action: Action<T>) {
         const method = this.getMethod(action.method);
         method(action.path, this.actionHandler(action.handler));
         this.#apiDocs.push({
-            path: `${this.config?.basePath ?? ""}${action.path}`,
+            path: `${this.config?.basePath ?? ""}${
+                this.filterPathName(action.path)
+            }`,
             method: action.method,
             description: action.description,
             responses: action.responses,
@@ -109,5 +111,9 @@ export class Router {
             const result = await handler({ body, params, query, context: c });
             return c.json(result);
         };
+    }
+
+    private filterPathName(path: string) {
+        return path === "/" ? "" : path;
     }
 }

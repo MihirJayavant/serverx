@@ -12,11 +12,13 @@ export const responses = {
         content: {
             "application/json": {
                 schema: {
-                    type: "array",
-                    items: {
-                        type: "string",
-                        format: "email",
+                    type: "object",
+                    properties: {
+                        name: {
+                            type: "string",
+                        },
                     },
+                    "required": ["name"],
                 },
             },
         },

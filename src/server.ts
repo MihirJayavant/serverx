@@ -9,11 +9,10 @@ export class Server {
     addRouter(router: Router) {
         this.#router.route("/", router.nativeRouter);
         const docs = router.nativeApiDocs;
-        this.#apiDocs.concat(docs);
+        this.#apiDocs.push(...docs);
     }
 
     addOpenApi(config?: SwaggerUIOptions) {
-        console.log(this.#apiDocs);
         this.#router.get(config?.url ?? "/doc", (c) => {
             return c.json({
                 openapi: "3.0.0",
@@ -27,7 +26,7 @@ export class Server {
         this.#router.get("/api-docs", swaggerUI(config));
     }
 
-    formatOpenApiPath() {
+    private formatOpenApiPath() {
         // deno-lint-ignore no-explicit-any
         const paths: any = {};
         for (const doc of this.#apiDocs) {

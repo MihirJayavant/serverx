@@ -9,8 +9,8 @@ export const paths = {
                     "content": {
                         "application/json": {
                             "schema": {
-                                "type": "array",
-                                "items": {
+                                "type": "object",
+                                "properties": {
                                     "type": "string",
                                     "format": "email",
                                 },

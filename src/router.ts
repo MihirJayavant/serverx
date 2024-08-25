@@ -1,6 +1,6 @@
 import { Context, Hono } from "@hono/hono";
 
-export type Config = {
+type Config = {
     basePath?: string;
 };
 
@@ -28,12 +28,22 @@ export type Action<TResult extends object> = {
     method: HttpMethod;
     path: string;
     handler: (context: ActionContext) => Promise<TResult>;
+    description: string;
+    responses: Record<string, unknown>;
+};
+
+export type ApiDocs = {
+    path: string;
+    description: string;
+    method: HttpMethod;
+    responses: Record<string, unknown>;
 };
 
 export class Router {
     readonly #router;
+    readonly #apiDocs: ApiDocs[] = [];
 
-    constructor(config?: Config) {
+    constructor(private config?: Config) {
         if (config?.basePath) {
             this.#router = new Hono().basePath(config.basePath);
         } else {
@@ -45,13 +55,28 @@ export class Router {
         return this.#router;
     }
 
+    get nativeApiDocs() {
+        return this.#apiDocs as ReadonlyArray<ApiDocs>;
+    }
+
     addSubRouter(router: Router) {
         this.#router.route("/", router.nativeRouter);
+        const docs = router.nativeApiDocs.map((p) => ({
+            ...p,
+            path: `${this.config?.basePath ?? ""}${p.path}`,
+        }));
+        this.#apiDocs.concat(docs);
     }
 
     addAction<T extends object>(action: Action<T>) {
         const method = this.getMethod(action.method);
         method(action.path, this.actionHandler(action.handler));
+        this.#apiDocs.push({
+            path: `${this.config?.basePath ?? ""}${action.path}`,
+            method: action.method,
+            description: action.description,
+            responses: action.responses,
+        });
     }
 
     private getMethod(type: HttpMethod) {

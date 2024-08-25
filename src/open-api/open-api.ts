@@ -27,7 +27,7 @@ type OriginalSwaggerUIOptions = {
   manuallySwaggerUIHtml?: (asset: AssetURLs) => string;
 };
 
-type SwaggerUIOptions = OriginalSwaggerUIOptions & DistSwaggerUIOptions;
+export type SwaggerUIOptions = OriginalSwaggerUIOptions & DistSwaggerUIOptions;
 
 function swaggerUIGen(options: SwaggerUIOptions) {
   const asset = remoteAssets({ version: options?.version });
@@ -59,7 +59,7 @@ function swaggerUIGen(options: SwaggerUIOptions) {
   `;
 }
 
-export function swaggerUI(options: SwaggerUIOptions) {
+export function swaggerUI(options: SwaggerUIOptions = { url: "/doc" }) {
   return (c: Context) => {
     return c.html(`
       <html lang="en">

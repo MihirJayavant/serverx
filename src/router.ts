@@ -1,18 +1,10 @@
 import { Context, Hono } from "@hono/hono";
+import { HttpMethod } from "./http/methods.ts";
+import { OpenApi } from "./open-api/open-api.ts";
 
 type Config = {
     basePath?: string;
 };
-
-export const httpMethods = {
-    GET: "GET",
-    POST: "POST",
-    PUT: "PUT",
-    PATCH: "PATCH",
-    DELETE: "DELETE",
-} as const;
-
-export type HttpMethod = keyof typeof httpMethods;
 
 export type ActionContext<TBody = unknown, TQuery = unknown, TParam = unknown> =
     {
@@ -28,20 +20,13 @@ export type Action<TResult extends object> = {
     method: HttpMethod;
     path: string;
     handler: (context: ActionContext) => Promise<TResult>;
-    description: string;
-    responses: Record<string, unknown>;
-};
-
-export type ApiDocs = {
-    path: string;
-    description: string;
-    method: HttpMethod;
-    responses: Record<string, unknown>;
+    description?: string;
+    responses?: Record<string, unknown>;
 };
 
 export class Router {
     readonly #router;
-    readonly #apiDocs: ApiDocs[] = [];
+    readonly #apiDocs: OpenApi = new OpenApi();
 
     constructor(private config?: Config) {
         if (config?.basePath) {
@@ -56,26 +41,25 @@ export class Router {
     }
 
     get nativeApiDocs() {
-        return this.#apiDocs as ReadonlyArray<ApiDocs>;
+        return this.#apiDocs;
     }
 
     addSubRouter(router: Router) {
-        this.#router.route("/", router.nativeRouter);
-        const docs = router.nativeApiDocs.map((p) => ({
-            ...p,
-            path: `${this.config?.basePath ?? ""}${p.path}`,
-        }));
-        this.#apiDocs.push(...docs);
+        this.#router.route("/", router.#router);
+        this.#apiDocs.addSubOpenApi({
+            route: "/",
+            openApi: router.#apiDocs,
+            basePath: this.config?.basePath,
+        });
     }
 
     addAction<T extends object>(action: Action<T>) {
         const method = this.getMethod(action.method);
         method(action.path, this.actionHandler(action.handler));
-        this.#apiDocs.push({
-            path: `${this.config?.basePath ?? ""}${
-                this.filterPathName(action.path)
-            }`,
+        this.#apiDocs.addAction({
             method: action.method,
+            basePath: this.config?.basePath,
+            path: action.path,
             description: action.description,
             responses: action.responses,
         });

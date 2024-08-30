@@ -1,3 +1,4 @@
+// deno-lint-ignore-file no-explicit-any
 export type Url = {
     url: string;
     name: string;

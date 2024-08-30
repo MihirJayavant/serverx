@@ -1,10 +1,16 @@
-import { httpMethods } from "../../src/router.ts";
+import { httpMethods } from "../../src/http/methods.ts";
 
 export const path = "/";
 
 export const method = httpMethods.GET;
 
 export const description = "Returns User Profile";
+
+export function handler() {
+    return Promise.resolve({
+        name: "James Turner",
+    });
+}
 
 export const responses = {
     "200": {
@@ -24,9 +30,3 @@ export const responses = {
         },
     },
 };
-
-export function handler() {
-    return Promise.resolve({
-        name: "James Turner",
-    });
-}

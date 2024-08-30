@@ -1,78 +1,74 @@
-import { Context } from "@hono/hono";
-import { html } from "@hono/hono/html";
-import { DistSwaggerUIOptions, renderSwaggerUIOptions } from "./renderer.ts";
+import { HttpMethod } from "../http/methods.ts";
 
-export type AssetURLs = {
-  css: string[];
-  js: string[];
+export type ApiDocs = {
+    path: string;
+    description: string;
+    method: HttpMethod;
+    responses: Record<string, unknown>;
 };
 
-type ResourceConfig = {
-  version?: string;
+type Optional<T, K extends keyof T> = Omit<T, K> & Partial<Pick<T, K>>;
+
+type AddAction = Optional<ApiDocs, "description" | "responses"> & {
+    basePath?: string;
 };
 
-export const remoteAssets = ({ version }: ResourceConfig): AssetURLs => {
-  const url = `https://cdn.jsdelivr.net/npm/swagger-ui-dist${
-    version !== undefined ? `@${version}` : ""
-  }`;
-
-  return {
-    css: [`${url}/swagger-ui.css`],
-    js: [`${url}/swagger-ui-bundle.js`],
-  };
+export type OpenApiUiOption = {
+    url: string;
+    openapi: string;
+    info: {
+        version: string;
+        title: string;
+    };
 };
 
-type OriginalSwaggerUIOptions = {
-  version?: string;
-  manuallySwaggerUIHtml?: (asset: AssetURLs) => string;
-};
+export class OpenApi {
+    readonly #docs: ApiDocs[] = [];
 
-export type SwaggerUIOptions = OriginalSwaggerUIOptions & DistSwaggerUIOptions;
+    addAction(action: AddAction) {
+        this.#docs.push({
+            method: action.method,
+            path: `${action.basePath ?? ""}${this.filterPathName(action.path)}`,
+            description: action.description ?? "",
+            responses: action.responses ?? {},
+        });
+    }
 
-function swaggerUIGen(options: SwaggerUIOptions) {
-  const asset = remoteAssets({ version: options?.version });
-  delete options.version;
+    addSubOpenApi(
+        subRoute: { route: string; openApi: OpenApi; basePath?: string },
+    ) {
+        const docs = subRoute.openApi.#docs.map((p) => ({
+            ...p,
+            path: `${subRoute.basePath ?? ""}${p.path}`,
+        }));
+        this.#docs.push(...docs);
+    }
 
-  if (options.manuallySwaggerUIHtml) {
-    return options.manuallySwaggerUIHtml(asset);
-  }
+    private filterPathName(path: string) {
+        return path === "/" ? "" : path;
+    }
 
-  const optionsStrings = renderSwaggerUIOptions(options);
+    private formatOpenApiPath() {
+        // deno-lint-ignore no-explicit-any
+        const paths: any = {};
+        for (const doc of this.#docs) {
+            if (!paths[doc.path]) {
+                paths[doc.path] = {};
+            }
 
-  return `
-    <div>
-      <div id="swagger-ui"></div>
-      ${asset.css.map((url) => html`<link rel="stylesheet" href="${url}" />`)}
-      ${
-    asset.js.map((url) =>
-      html`<script src="${url}" crossorigin="anonymous"></script>`
-    )
-  }
-      <script>
-        window.onload = () => {
-          window.ui = SwaggerUIBundle({
-            dom_id: '#swagger-ui',${optionsStrings},
-          })
+            paths[doc.path][doc.method.toLowerCase()] = {
+                description: doc.description,
+                responses: doc.responses,
+            };
         }
-      </script>
-    </div>
-  `;
-}
+        return paths;
+    }
 
-export function swaggerUI(options: SwaggerUIOptions = { url: "/doc" }) {
-  return (c: Context) => {
-    return c.html(`
-      <html lang="en">
-        <head>
-          <meta charset="utf-8" />
-          <meta name="viewport" content="width=device-width, initial-scale=1" />
-          <meta name="description" content="SwaggerUI" />
-          <title>SwaggerUI</title>
-        </head>
-        <body>
-          ${swaggerUIGen(options)}
-        </body>
-      </html>
-    `);
-  };
+    getOpenApiJsonDoc(options: OpenApiUiOption) {
+        return {
+            openapi: options.openapi,
+            info: options.info,
+            paths: this.formatOpenApiPath(),
+        };
+    }
 }

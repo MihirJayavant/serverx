@@ -1,6 +1,7 @@
 import { Context, Hono } from "@hono/hono";
 import { HttpMethod } from "./http/methods.ts";
 import { ApiDocs, OpenApi } from "./open-api/open-api.ts";
+import { OptionalExcept, Prettify } from "./core/utility.types.ts";
 
 type Config = {
     basePath?: string;
@@ -16,9 +17,11 @@ export type ActionContext<TBody = unknown, TQuery = unknown, TParam = unknown> =
 
 export type ActionBodyContext<TBody> = ActionContext<TBody>;
 
-export type Action<TResult extends object> = {
-    handler: (context: ActionContext) => Promise<TResult>;
-} & ApiDocs;
+export type Action<TResult extends object> = Prettify<
+    {
+        handler: (context: ActionContext) => Promise<TResult>;
+    } & OptionalExcept<ApiDocs, "path" | "method">
+>;
 
 export class Router {
     readonly #router;

@@ -1,28 +1,18 @@
 import { httpMethods } from "../../src/http/methods.ts";
 
 export const tags = ["user"];
-export const path = "/:userId";
+export const path = "/";
 
 export const method = httpMethods.GET;
 
 export const description = "Returns User Profile";
 
-export const parameters = [
-    {
-        "name": "userId",
-        "in": "path",
-        "description": "ID of User",
-        "required": true,
-        "schema": {
-            "type": "string",
-        },
-    },
-];
-
 export function handler() {
-    return Promise.resolve({
+    return Promise.resolve([{
         name: "James Turner",
-    });
+    }, {
+        name: "Joe Turner",
+    }]);
 }
 
 export const responses = {
@@ -31,13 +21,16 @@ export const responses = {
         content: {
             "application/json": {
                 schema: {
-                    type: "object",
-                    properties: {
-                        name: {
-                            type: "string",
+                    type: "array",
+                    items: {
+                        type: "object",
+                        properties: {
+                            name: {
+                                type: "string",
+                            },
                         },
+                        "required": ["name"],
                     },
-                    "required": ["name"],
                 },
             },
         },

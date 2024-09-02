@@ -1,22 +1,17 @@
+import { OptionalExcept, Prettify } from "../core/utility.types.ts";
 import { HttpMethod } from "../http/methods.ts";
 
 export type ApiDocs = {
     path: string;
     description: string;
     method: HttpMethod;
-    tags: [];
-    parameters: unknown[];
+    tags: string[];
+    parameters: Record<string, unknown>[];
     requestBody: Record<string, unknown>;
     responses: Record<string, unknown>;
 };
 
-type OptionalExcept<T, K extends keyof T> = Partial<Omit<T, K>> & Pick<T, K>;
-
-type AsOneType<T> = {
-    [K in keyof T]: T[K];
-};
-
-type AddAction = AsOneType<
+type AddAction = Prettify<
     OptionalExcept<ApiDocs, "path" | "method"> & {
         basePath?: string;
     }

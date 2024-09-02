@@ -1,3 +1,5 @@
+import { JsonType } from "../core/utility.types.ts";
+
 export const statusCodes = {
     Ok: 200,
     Created: 201,
@@ -29,35 +31,35 @@ export type ErrorStatusCode = Exclude<
     SuccessStatusCode | RedirectStatusCode
 >;
 
-export type SuccessResult<T> = {
-    status: number;
+export type SuccessResult<T extends JsonType> = {
+    status: SuccessStatusCode | RedirectStatusCode;
     data: T;
 };
 
-export type ErrorResult<T> = {
-    status: number;
-    error: T;
+export type ErrorResult = {
+    status: ErrorStatusCode;
+    error: unknown;
 };
 
-export type Result<TSuccess, TError> =
-    | SuccessResult<TSuccess>
-    | ErrorResult<TError>;
+export type Result<T extends JsonType> =
+    | SuccessResult<T>
+    | ErrorResult;
 
-export function isSucess<TSuccess, TError>(
-    result: Result<TSuccess, TError>,
-): result is SuccessResult<TSuccess> {
+export function isSuccess<T extends JsonType>(
+    result: Result<T>,
+): result is SuccessResult<T> {
     return result.status >= 200 && result.status <= 400;
 }
 
-export function isError<TSuccess, TError>(
-    result: Result<TSuccess, TError>,
-): result is ErrorResult<TError> {
-    return !isSucess(result);
+export function isError<T extends JsonType>(
+    result: Result<T>,
+): result is ErrorResult {
+    return !isSuccess(result);
 }
 
-export function internalServerError<TError>(
-    error: TError,
-): ErrorResult<TError> {
+export function internalServerError(
+    error: unknown,
+): ErrorResult {
     return {
         status: 500,
         error,

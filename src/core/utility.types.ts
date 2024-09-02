@@ -5,3 +5,5 @@ export type Prettify<T> = {
 export type OptionalExcept<T, K extends keyof T> =
     & Partial<Omit<T, K>>
     & Pick<T, K>;
+
+export type JsonType = Record<string, never>;

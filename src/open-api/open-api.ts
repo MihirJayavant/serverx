@@ -4,14 +4,23 @@ export type ApiDocs = {
     path: string;
     description: string;
     method: HttpMethod;
+    tags: [];
+    parameters: unknown[];
+    requestBody: Record<string, unknown>;
     responses: Record<string, unknown>;
 };
 
-type Optional<T, K extends keyof T> = Omit<T, K> & Partial<Pick<T, K>>;
+type OptionalExcept<T, K extends keyof T> = Partial<Omit<T, K>> & Pick<T, K>;
 
-type AddAction = Optional<ApiDocs, "description" | "responses"> & {
-    basePath?: string;
+type AsOneType<T> = {
+    [K in keyof T]: T[K];
 };
+
+type AddAction = AsOneType<
+    OptionalExcept<ApiDocs, "path" | "method"> & {
+        basePath?: string;
+    }
+>;
 
 export type OpenApiUiOption = {
     url: string;
@@ -29,8 +38,11 @@ export class OpenApi {
         this.#docs.push({
             method: action.method,
             path: `${action.basePath ?? ""}${this.filterPathName(action.path)}`,
+            tags: action.tags ?? [],
             description: action.description ?? "",
+            parameters: action.parameters ?? [],
             responses: action.responses ?? {},
+            requestBody: action.requestBody ?? {},
         });
     }
 
@@ -57,8 +69,7 @@ export class OpenApi {
             }
 
             paths[doc.path][doc.method.toLowerCase()] = {
-                description: doc.description,
-                responses: doc.responses,
+                ...doc,
             };
         }
         return paths;

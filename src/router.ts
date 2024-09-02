@@ -1,6 +1,6 @@
 import { Context, Hono } from "@hono/hono";
 import { HttpMethod } from "./http/methods.ts";
-import { OpenApi } from "./open-api/open-api.ts";
+import { ApiDocs, OpenApi } from "./open-api/open-api.ts";
 
 type Config = {
     basePath?: string;
@@ -17,12 +17,8 @@ export type ActionContext<TBody = unknown, TQuery = unknown, TParam = unknown> =
 export type ActionBodyContext<TBody> = ActionContext<TBody>;
 
 export type Action<TResult extends object> = {
-    method: HttpMethod;
-    path: string;
     handler: (context: ActionContext) => Promise<TResult>;
-    description?: string;
-    responses?: Record<string, unknown>;
-};
+} & ApiDocs;
 
 export class Router {
     readonly #router;
@@ -57,11 +53,8 @@ export class Router {
         const method = this.getMethod(action.method);
         method(action.path, this.actionHandler(action.handler));
         this.#apiDocs.addAction({
-            method: action.method,
+            ...action,
             basePath: this.config?.basePath,
-            path: action.path,
-            description: action.description,
-            responses: action.responses,
         });
     }
 

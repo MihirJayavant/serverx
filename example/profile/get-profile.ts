@@ -8,38 +8,38 @@ export const method = httpMethods.GET;
 export const description = "Returns User Profile";
 
 export const parameters = [
-    {
-        "name": "userId",
-        "in": "path",
-        "description": "ID of User",
-        "required": true,
-        "schema": {
-            "type": "string",
-        },
+  {
+    "name": "userId",
+    "in": "path",
+    "description": "ID of User",
+    "required": true,
+    "schema": {
+      "type": "string",
     },
+  },
 ];
 
 export function handler() {
-    return Promise.resolve({
-        name: "James Turner",
-    });
+  return Promise.resolve({
+    name: "James Turner",
+  });
 }
 
 export const responses = {
-    "200": {
-        description: "User Profile",
-        content: {
-            "application/json": {
-                schema: {
-                    type: "object",
-                    properties: {
-                        name: {
-                            type: "string",
-                        },
-                    },
-                    "required": ["name"],
-                },
+  "200": {
+    description: "User Profile",
+    content: {
+      "application/json": {
+        schema: {
+          type: "object",
+          properties: {
+            name: {
+              type: "string",
             },
+          },
+          "required": ["name"],
         },
+      },
     },
+  },
 };

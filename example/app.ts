@@ -5,9 +5,9 @@ const app = new Server();
 
 app.addRouter(profileRouter);
 app.addOpenApi({
-    url: "/doc",
-    openapi: "3.0.0",
-    info: { title: "Profile API", version: "1.0.0" },
+  url: "/doc",
+  openapi: "3.0.0",
+  info: { title: "Profile API", version: "1.0.0" },
 });
 
 app.serve({ port: 3100, hostname: "127.0.0.1" });

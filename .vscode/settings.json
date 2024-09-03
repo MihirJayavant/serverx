@@ -1,15 +1,15 @@
 {
-    "editor.defaultFormatter": "denoland.vscode-deno",
-    "editor.formatOnSave": true,
-    "editor.formatOnPaste": true,
-    "deno.enable": true,
-    "[json]": {
-        "editor.defaultFormatter": "vscode.json-language-features"
-    },
-    "deno.codeLens.implementations": true,
-    "deno.codeLens.test": true,
-    "deno.codeLens.referencesAllFunctions": true,
-    "deno.codeLens.references": true,
-    "deno.config": "deno.json",
-    "deno.cacheOnSave": true
+  "editor.defaultFormatter": "denoland.vscode-deno",
+  "editor.formatOnSave": true,
+  "editor.formatOnPaste": true,
+  "deno.enable": true,
+  "[json]": {
+    "editor.defaultFormatter": "vscode.json-language-features"
+  },
+  "deno.codeLens.implementations": true,
+  "deno.codeLens.test": true,
+  "deno.codeLens.referencesAllFunctions": true,
+  "deno.codeLens.references": true,
+  "deno.config": "deno.json",
+  "deno.cacheOnSave": true
 }

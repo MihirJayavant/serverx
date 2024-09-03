@@ -1,7 +1,7 @@
 import { Hono } from "@hono/hono";
-import { Router } from "./router.ts";
+import type { Router } from "./router.ts";
 import { swaggerUI } from "./open-api/ui.ts";
-import { OpenApi, OpenApiUiOption } from "./open-api/open-api.ts";
+import { OpenApi, type OpenApiUiOption } from "./open-api/open-api.ts";
 
 export class Server {
   #router = new Hono();

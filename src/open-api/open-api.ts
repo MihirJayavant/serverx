@@ -1,5 +1,5 @@
-import { OptionalExcept, Prettify } from "../core/utility.types.ts";
-import { HttpMethod } from "../http/methods.ts";
+import type { OptionalExcept, Prettify } from "../core/utility.types.ts";
+import type { HttpMethod } from "../http/methods.ts";
 
 export type ApiDocs = {
   path: string;
@@ -70,7 +70,10 @@ export class OpenApi {
     return paths;
   }
 
-  getOpenApiJsonDoc(options: OpenApiUiOption) {
+  getOpenApiJsonDoc(
+    options: OpenApiUiOption,
+    // deno-lint-ignore no-explicit-any
+  ): Omit<OpenApiUiOption, "url"> & { paths: any } {
     return {
       openapi: options.openapi,
       info: options.info,

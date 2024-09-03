@@ -1,7 +1,7 @@
-import { Context, Hono } from "@hono/hono";
-import { HttpMethod } from "./http/methods.ts";
-import { ApiDocs, OpenApi } from "./open-api/open-api.ts";
-import { OptionalExcept, Prettify } from "./core/utility.types.ts";
+import { type Context, Hono } from "@hono/hono";
+import type { HttpMethod } from "./http/methods.ts";
+import { type ApiDocs, OpenApi } from "./open-api/open-api.ts";
+import type { OptionalExcept, Prettify } from "./core/utility.types.ts";
 
 type Config = {
   basePath?: string;
@@ -35,11 +35,11 @@ export class Router {
     }
   }
 
-  get nativeRouter() {
+  get nativeRouter(): Hono {
     return this.#router;
   }
 
-  get nativeApiDocs() {
+  get nativeApiDocs(): OpenApi {
     return this.#apiDocs;
   }
 

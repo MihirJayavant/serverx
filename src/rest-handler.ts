@@ -1,7 +1,8 @@
-import { Context } from "@hono/hono";
-import { RequestHandler } from "./request-handler.ts";
+import type { Context } from "@hono/hono";
+import type { RequestHandler } from "./request-handler.ts";
 import { isSuccess } from "./http/result.ts";
-import { JsonType } from "./core/utility.types.ts";
+import type { JsonType } from "./core/utility.types.ts";
+import type { TypedResponse } from "@hono/hono";
 
 type RestHandler<Input, Output extends JsonType> = {
   handler: RequestHandler<Input, Output>;
@@ -11,7 +12,7 @@ type RestHandler<Input, Output extends JsonType> = {
 
 export async function restHandler<Input, Output extends JsonType>(
   { handler, input, context }: RestHandler<Input, Output>,
-) {
+): Promise<TypedResponse> {
   try {
     const result = await handler(input);
     if (isSuccess(result)) {

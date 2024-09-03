@@ -1,6 +1,9 @@
-import { Context } from "@hono/hono";
+import type { Context } from "@hono/hono";
 import { html } from "@hono/hono/html";
-import { DistSwaggerUIOptions, renderSwaggerUIOptions } from "./renderer.ts";
+import {
+  type DistSwaggerUIOptions,
+  renderSwaggerUIOptions,
+} from "./renderer.ts";
 
 export type AssetURLs = {
   css: string[];

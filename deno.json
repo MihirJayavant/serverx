@@ -1,4 +1,7 @@
 {
+  "name": "@serverx/server",
+  "version": "0.1.0",
+  "exports": "./src/index.ts",
   "tasks": {
     "dev": "deno run --allow-net --watch ./example/app.ts"
   },

@@ -1,4 +1,4 @@
-import { SwaggerConfigs } from "./config.ts";
+import type { SwaggerConfigs } from "./config.ts";
 
 type RequireOne<T, K extends keyof T = keyof T> = K extends keyof T
   ? PartialRequire<T, K>

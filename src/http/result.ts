@@ -65,3 +65,13 @@ export function internalServerError(
     error,
   };
 }
+
+export function errorResult(
+  status: ErrorStatusCode,
+  error: unknown,
+): ErrorResult {
+  return {
+    status,
+    error,
+  };
+}

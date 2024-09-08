@@ -21,8 +21,14 @@ export const parameters = [
   },
 ];
 
-export function handler({ context }: ActionContext) {
-  return restHandler({ handler: getProfileHandler, context, input: {} });
+export function handler(
+  { context, params }: ActionContext<unknown, unknown, { userId: string }>,
+) {
+  return restHandler({
+    handler: getProfileHandler,
+    context,
+    input: { id: Number(params.userId) },
+  });
 }
 
 export const responses = {

@@ -1,4 +1,6 @@
 import { httpMethods } from "../../src/http/methods.ts";
+import { type ActionContext, restHandler } from "../../src/index.ts";
+import { getProfileHandler } from "./get-profile.handler.ts";
 
 export const tags = ["user"];
 export const path = "/:userId";
@@ -19,9 +21,13 @@ export const parameters = [
   },
 ];
 
-export function handler() {
-  return Promise.resolve({
-    name: "James Turner",
+export function handler(
+  { context, params }: ActionContext<unknown, unknown, { userId: string }>,
+) {
+  return restHandler({
+    handler: getProfileHandler,
+    context,
+    input: { id: Number(params.userId) },
   });
 }
 

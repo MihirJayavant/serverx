@@ -32,7 +32,9 @@ export class OpenApi {
   addAction(action: AddAction) {
     this.#docs.push({
       method: action.method,
-      path: `${action.basePath ?? ""}${this.filterPathName(action.path)}`,
+      path: this.convertPath(
+        `${action.basePath ?? ""}${this.filterPathName(action.path)}`,
+      ),
       tags: action.tags ?? [],
       description: action.description ?? "",
       parameters: action.parameters ?? [],
@@ -46,7 +48,7 @@ export class OpenApi {
   ) {
     const docs = subRoute.openApi.#docs.map((p) => ({
       ...p,
-      path: `${subRoute.basePath ?? ""}${p.path}`,
+      path: this.convertPath(`${subRoute.basePath ?? ""}${p.path}`),
     }));
     this.#docs.push(...docs);
   }
@@ -79,5 +81,9 @@ export class OpenApi {
       info: options.info,
       paths: this.formatOpenApiPath(),
     };
+  }
+
+  private convertPath(path: string): string {
+    return path.replace(/:([^\/]+)/g, "{$1}");
   }
 }

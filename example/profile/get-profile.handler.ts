@@ -3,28 +3,28 @@ import { baseHandler } from "../../src/index.ts";
 import { z } from "@zod/zod";
 
 type Input = {
-    id: number;
+  id: number;
 };
 
 type Output = {
-    name: string;
+  name: string;
 };
 
 const schema = z.object({
-    id: z.number().min(1),
+  id: z.number().min(1),
 });
 
 const database = [{ id: 1, name: "Peter Pan" }, { id: 2, name: "Mac Milan" }];
 
 function handler(input: Input) {
-    const data = database.find((d) => d.id === input.id);
-    if (!data) {
-        return errorResult(404, "User not found");
-    }
-    return successResult<Output>(data);
+  const data = database.find((d) => d.id === input.id);
+  if (!data) {
+    return errorResult(404, "User not found");
+  }
+  return successResult<Output>(data);
 }
 
 export const getProfileHandler = baseHandler({
-    handler,
-    validationSchema: schema,
+  handler,
+  validationSchema: schema,
 });

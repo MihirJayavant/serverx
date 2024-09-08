@@ -89,11 +89,8 @@ export class Router {
       const query = c.req.query();
 
       const result = await handler({ body, params, query, context: c });
-      return c.json(result);
+      // deno-lint-ignore no-explicit-any
+      return result as any;
     };
-  }
-
-  private filterPathName(path: string) {
-    return path === "/" ? "" : path;
   }
 }

@@ -48,7 +48,7 @@ export type Result<T extends JsonType> =
 export function isSuccess<T extends JsonType>(
   result: Result<T>,
 ): result is SuccessResult<T> {
-  return result.status >= 200 && result.status <= 400;
+  return result.status >= 200 && result.status < 400;
 }
 
 export function isError<T extends JsonType>(
@@ -73,5 +73,15 @@ export function errorResult(
   return {
     status,
     error,
+  };
+}
+
+export function successResult<T extends JsonType>(
+  data: T,
+  status: SuccessStatusCode = 200,
+): SuccessResult<T> {
+  return {
+    data,
+    status,
   };
 }

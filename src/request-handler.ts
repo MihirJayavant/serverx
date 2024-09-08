@@ -17,7 +17,7 @@ export function baseHandler<Input, Output extends JsonType>(
   return (input: Input) => {
     const validation = option.validationSchema?.safeParse(input);
     if (validation && validation.success === false) {
-      return errorResult(statusCodes.BadRequest, validation.error.message);
+      return errorResult(statusCodes.BadRequest, validation.error.errors);
     }
     return option.handler(input);
   };

@@ -1,7 +1,13 @@
 import { type Context, Hono } from "@hono/hono";
 import type { HttpMethod } from "./http/methods.ts";
 import { type ApiDocs, OpenApi } from "./open-api/open-api.ts";
-import type { OptionalExcept, Prettify } from "./core/utility.types.ts";
+import type {
+  JsonType,
+  OptionalExcept,
+  Prettify,
+  Task,
+} from "./core/utility.types.ts";
+import { isSuccess, type Result } from "./http/result.ts";
 
 type Config = {
   basePath?: string;
@@ -17,9 +23,10 @@ export type ActionContext<TBody = unknown, TQuery = unknown, TParam = unknown> =
 
 export type ActionBodyContext<TBody> = ActionContext<TBody>;
 
-export type Action<TResult extends object> = Prettify<
+export type Action<TResult extends JsonType> = Prettify<
   {
-    handler: (context: ActionContext) => Promise<TResult>;
+    // deno-lint-ignore no-explicit-any
+    handler: (context: ActionContext<any, any, any>) => Task<Result<TResult>>;
   } & OptionalExcept<ApiDocs, "path" | "method">
 >;
 
@@ -52,7 +59,7 @@ export class Router {
     });
   }
 
-  addAction<T extends object>(action: Action<T>) {
+  addAction<T extends JsonType>(action: Action<T>) {
     const method = this.getMethod(action.method);
     method(action.path, this.actionHandler(action.handler));
     this.#apiDocs.addAction({
@@ -76,8 +83,8 @@ export class Router {
     }
   }
 
-  private actionHandler<T extends object>(
-    handler: (context: ActionContext) => Promise<T>,
+  private actionHandler<T extends JsonType>(
+    handler: (context: ActionContext) => Task<Result<T>>,
   ) {
     // deno-lint-ignore no-explicit-any
     return async (c: Context<any, any, any>) => {
@@ -87,10 +94,16 @@ export class Router {
       }
       const params = c.req.param();
       const query = c.req.query();
-
-      const result = await handler({ body, params, query, context: c });
-      // deno-lint-ignore no-explicit-any
-      return result as any;
+      try {
+        const result = await handler({ body, params, query, context: c });
+        if (isSuccess(result)) {
+          return c.json(result.data, result.status);
+        } else {
+          return c.json({ error: result.error }, result.status);
+        }
+      } catch (error) {
+        return c.json({ error }, 500);
+      }
     };
   }
 }

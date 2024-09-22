@@ -4,9 +4,7 @@ import { getProfileHandler } from "./get-profile.handler.ts";
 
 export const tags = ["user"];
 export const path = "/:userId";
-
 export const method = httpMethods.GET;
-
 export const description = "Returns User Profile";
 
 export const parameters = [

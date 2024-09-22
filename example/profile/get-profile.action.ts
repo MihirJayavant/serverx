@@ -1,12 +1,10 @@
 import { httpMethods } from "../../src/http/methods.ts";
-import { type ActionContext, restHandler } from "../../src/index.ts";
+import type { ActionContext } from "../../src/index.ts";
 import { getProfileHandler } from "./get-profile.handler.ts";
 
 export const tags = ["user"];
 export const path = "/:userId";
-
 export const method = httpMethods.GET;
-
 export const description = "Returns User Profile";
 
 export const parameters = [
@@ -22,13 +20,9 @@ export const parameters = [
 ];
 
 export function handler(
-  { context, params }: ActionContext<unknown, unknown, { userId: string }>,
+  { params }: ActionContext<unknown, unknown, { userId: string }>,
 ) {
-  return restHandler({
-    handler: getProfileHandler,
-    context,
-    input: { id: Number(params.userId) },
-  });
+  return getProfileHandler({ id: Number(params.userId) });
 }
 
 export const responses = {

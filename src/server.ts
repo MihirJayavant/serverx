@@ -1,4 +1,5 @@
 import { Hono } from "@hono/hono";
+import type { Context, Next } from "@hono/hono";
 import type { Router } from "./router.ts";
 import { swaggerUI } from "./open-api/ui.ts";
 import { OpenApi, type OpenApiUiOption } from "./open-api/open-api.ts";
@@ -21,6 +22,12 @@ export class Server {
       return c.json(this.#apiDocs.getOpenApiJsonDoc(config));
     });
     this.#router.get("/api-docs", swaggerUI({ url: config.url ?? "/doc" }));
+  }
+
+  addMiddleware(
+    fn: (context: Context, next: Next) => Promise<void | Response>,
+  ) {
+    this.#router.use("/", fn);
   }
 
   serve(options: Deno.ServeOptions) {

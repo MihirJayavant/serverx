@@ -1,7 +1,10 @@
 import { Server } from "../src/server.ts";
 import { profileRouter } from "./profile/index.ts";
+import { cors } from "@hono/hono/cors";
 
 const app = new Server();
+
+app.addMiddleware(cors());
 
 app.addRouter(profileRouter);
 app.addOpenApi({

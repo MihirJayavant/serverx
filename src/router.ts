@@ -1,4 +1,5 @@
-import { type Context, Hono } from "@hono/hono";
+import { Hono } from "@hono/hono";
+import type { Context, Next } from "@hono/hono";
 import type { HttpMethod } from "./http/methods.ts";
 import { type ApiDocs, OpenApi } from "./open-api/open-api.ts";
 import type {
@@ -105,5 +106,11 @@ export class Router {
         return c.json({ error }, 500);
       }
     };
+  }
+
+  addMiddleware(
+    fn: (context: Context, next: Next) => Promise<void | Response>,
+  ) {
+    this.#router.use("/", fn);
   }
 }

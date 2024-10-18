@@ -15,7 +15,9 @@ export const themes = [
 ] as const;
 
 export type ApiReferenceOptions = {
-    openApiUrl: string;
+    spec: {
+        url: string;
+    };
     cdn?: string;
     theme?: typeof themes[number];
 };

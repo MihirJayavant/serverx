@@ -34,7 +34,7 @@ export class Server {
   addScalar(path?: string, config?: ApiReferenceOptions) {
     this.#router.get(
       path ?? "/scalar-docs",
-      apiReference(config ?? { openApiUrl: "/doc" }),
+      apiReference(config ?? { spec: { url: "/doc" } }),
     );
   }
 
@@ -44,7 +44,11 @@ export class Server {
     this.#router.use("/", fn);
   }
 
-  serve(options: Deno.ServeOptions) {
+  serve(
+    options:
+      | Deno.ServeTcpOptions
+      | (Deno.ServeTcpOptions & Deno.TlsCertifiedKeyPem),
+  ) {
     Deno.serve(options, this.#router.fetch);
   }
 }

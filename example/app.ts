@@ -13,4 +13,7 @@ app.addOpenApi({
   info: { title: "Profile API", version: "1.0.0" },
 });
 
+app.addSwagger();
+app.addScalar();
+
 app.serve({ port: 3100, hostname: "127.0.0.1" });

@@ -3,6 +3,7 @@ import type { Context, Next } from "@hono/hono";
 import type { Router } from "./router.ts";
 import { swaggerUI } from "./open-api/ui.ts";
 import { OpenApi, type OpenApiUiOption } from "./open-api/open-api.ts";
+import { apiReference, type ApiReferenceOptions } from "./open-api/scalar.ts";
 
 export class Server {
   #router = new Hono();
@@ -21,7 +22,20 @@ export class Server {
     this.#router.get(config.url ?? "/doc", (c) => {
       return c.json(this.#apiDocs.getOpenApiJsonDoc(config));
     });
-    this.#router.get("/api-docs", swaggerUI({ url: config.url ?? "/doc" }));
+  }
+
+  addSwagger(path?: string, config?: OpenApiUiOption) {
+    this.#router.get(
+      path ?? "/swagger-docs",
+      swaggerUI({ url: config?.url ?? "/doc" }),
+    );
+  }
+
+  addScalar(path?: string, config?: ApiReferenceOptions) {
+    this.#router.get(
+      path ?? "/scalar-docs",
+      apiReference(config ?? { spec: { url: "/doc" } }),
+    );
   }
 
   addMiddleware(
@@ -30,7 +44,11 @@ export class Server {
     this.#router.use("/", fn);
   }
 
-  serve(options: Deno.ServeOptions) {
+  serve(
+    options:
+      | Deno.ServeTcpOptions
+      | (Deno.ServeTcpOptions & Deno.TlsCertifiedKeyPem),
+  ) {
     Deno.serve(options, this.#router.fetch);
   }
 }

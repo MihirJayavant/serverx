@@ -3,9 +3,7 @@ import { successResult } from "../../src/http/result.ts";
 
 export const tags = ["user"];
 export const path = "/";
-
 export const method = httpMethods.GET;
-
 export const description = "Returns User Profile";
 
 export function handler() {

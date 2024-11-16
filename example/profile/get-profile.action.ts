@@ -1,5 +1,9 @@
 import { httpMethods } from "../../src/http/methods.ts";
-import type { ActionContext } from "../../src/index.ts";
+import {
+  type ActionContext,
+  openApiParameter,
+  openApiResponse,
+} from "../../src/index.ts";
 import { getProfileHandler } from "./get-profile.handler.ts";
 
 export const tags = ["user"];
@@ -7,17 +11,17 @@ export const path = "/:userId";
 export const method = httpMethods.GET;
 export const description = "Returns User Profile";
 
-export const parameters = [
+export const parameters = openApiParameter(
   {
-    "name": "userId",
-    "in": "path",
-    "description": "ID of User",
-    "required": true,
-    "schema": {
-      "type": "string",
+    name: "userId",
+    in: "path",
+    description: "ID of User",
+    required: true,
+    schema: {
+      type: "string",
     },
   },
-];
+);
 
 export function handler(
   { params }: ActionContext<unknown, unknown, { userId: string }>,
@@ -25,21 +29,16 @@ export function handler(
   return getProfileHandler({ id: Number(params.userId) });
 }
 
-export const responses = {
-  "200": {
-    description: "User Profile",
-    content: {
-      "application/json": {
-        schema: {
-          type: "object",
-          properties: {
-            name: {
-              type: "string",
-            },
-          },
-          "required": ["name"],
-        },
+export const responses = openApiResponse({
+  status: 200,
+  description: "User Profile",
+  schema: {
+    type: "object",
+    properties: {
+      name: {
+        type: "string",
       },
     },
+    required: ["name"],
   },
-};
+});

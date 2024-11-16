@@ -1,3 +1,5 @@
+import type { StatusCode } from "../http/result.ts";
+
 type PrimitiveType = "string" | "number" | "boolean";
 
 type SchemaObject = {
@@ -18,19 +20,19 @@ type PrimitiveSchema = {
 
 type ObjectSchema = {
     type: "object";
-    required?: boolean;
+    required?: string[];
     default?: object;
     description?: string;
-    properties: SchemaObject; // Nested object properties
+    properties: SchemaObject;
 };
 
 type ArraySchema = {
     type: "array";
     required?: boolean;
     // deno-lint-ignore no-explicit-any
-    default?: any[]; // Default can be an empty array or pre-defined list
+    default?: any[];
     description?: string;
-    items: SchemaProperty; // Defines structure of array items
+    items: SchemaProperty;
 };
 
 export type ParameterType = {
@@ -42,6 +44,16 @@ export type ParameterType = {
     schema?: SchemaProperty;
 };
 
-export function parameter(...parameters: ParameterType[]) {
+export type ResponseType = {
+    status: StatusCode;
+    description?: string;
+    schema: SchemaProperty;
+};
+
+export function openApiParameter(...parameters: ParameterType[]) {
     return parameters;
+}
+
+export function openApiResponse(...responses: ResponseType[]) {
+    return responses;
 }

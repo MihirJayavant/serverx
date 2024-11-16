@@ -50,10 +50,34 @@ export type ResponseType = {
     schema: SchemaProperty;
 };
 
-export function openApiParameter(...parameters: ParameterType[]) {
+export type OpenApiResponse = {
+    [key: string]: {
+        description?: string;
+        content: {
+            "application/json": {
+                schema: SchemaProperty;
+            };
+        };
+    };
+};
+
+export function openApiParameter(
+    ...parameters: ParameterType[]
+): ParameterType[] {
     return parameters;
 }
 
-export function openApiResponse(...responses: ResponseType[]) {
-    return responses;
+export function openApiResponse(...responses: ResponseType[]): OpenApiResponse {
+    const data: OpenApiResponse = {};
+    responses.forEach((r) =>
+        data[r.status] = {
+            description: r.description,
+            content: {
+                "application/json": {
+                    schema: r.schema,
+                },
+            },
+        }
+    );
+    return data;
 }

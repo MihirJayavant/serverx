@@ -10,7 +10,8 @@
     "jsr:@std/internal@^1.0.5": "1.0.5",
     "jsr:@std/path@^1.0.7": "1.0.8",
     "jsr:@std/path@^1.0.8": "1.0.8",
-    "jsr:@std/testing@^1.0.5": "1.0.5"
+    "jsr:@std/testing@^1.0.5": "1.0.5",
+    "npm:zod@^3.23.8": "3.23.8"
   },
   "jsr": {
     "@hono/hono@4.6.5": {
@@ -60,6 +61,11 @@
       ]
     }
   },
+  "npm": {
+    "zod@3.23.8": {
+      "integrity": "sha512-XBx9AXhXktjUqnepgTiE5flcKIYWi/rme0Eaj+5Y0lftuGBq+jyRu/md4WnuxqgP1ubdpNCsYEYPxrzVHD8d6g=="
+    }
+  },
   "remote": {
     "https://deno.land/x/zod@v3.16.1/ZodError.ts": "6e56e6416bbbad3539b577b7636dc198e5d87cf59f1ceb4e7b58d1d38190c2f7",
     "https://deno.land/x/zod@v3.16.1/external.ts": "433e13ff774fef22d416027308db33cacb719774898372ec5faa32bb572f11dc",
@@ -76,7 +82,8 @@
     "dependencies": [
       "jsr:@hono/hono@^4.6.5",
       "jsr:@std/assert@^1.0.8",
-      "jsr:@std/testing@^1.0.5"
+      "jsr:@std/testing@^1.0.5",
+      "npm:zod@^3.23.8"
     ]
   }
 }

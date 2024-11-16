@@ -4,7 +4,13 @@
   "editor.formatOnPaste": true,
   "deno.enable": true,
   "[json]": {
-    "editor.defaultFormatter": "vscode.json-language-features"
+    "editor.defaultFormatter": "denoland.vscode-deno"
+  },
+  "[javascript]": {
+    "editor.defaultFormatter": "denoland.vscode-deno"
+  },
+  "[typescript]": {
+    "editor.defaultFormatter": "denoland.vscode-deno"
   },
   "deno.codeLens.implementations": true,
   "deno.codeLens.test": true,

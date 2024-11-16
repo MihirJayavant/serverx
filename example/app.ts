@@ -1,5 +1,5 @@
 import { Server } from "../src/server.ts";
-import { profileRouter } from "./profile/index.ts";
+import { profileRouter } from "./profile/profile.ts";
 import { cors } from "@hono/hono/cors";
 
 const app = new Server();

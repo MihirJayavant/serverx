@@ -50,6 +50,12 @@ export type ResponseType = {
     schema: SchemaProperty;
 };
 
+export type RequestType = {
+    description?: string;
+    schema: SchemaProperty;
+    required: boolean;
+};
+
 export type OpenApiResponse = {
     [key: string]: {
         description?: string;
@@ -59,6 +65,12 @@ export type OpenApiResponse = {
             };
         };
     };
+};
+
+export type OpenApiRequestBody = {
+    description?: string;
+    content: { "application/json": { schema: SchemaProperty } };
+    required: boolean;
 };
 
 export function openApiParameter(
@@ -80,4 +92,18 @@ export function openApiResponse(...responses: ResponseType[]): OpenApiResponse {
         }
     );
     return data;
+}
+
+export function openApiRequestBody(
+    requestBody: RequestType,
+): OpenApiRequestBody {
+    return {
+        description: requestBody.description,
+        content: {
+            "application/json": {
+                schema: requestBody.schema,
+            },
+        },
+        required: requestBody.required,
+    };
 }

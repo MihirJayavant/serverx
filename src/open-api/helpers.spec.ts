@@ -2,8 +2,10 @@ import { assertEquals } from "@std/assert";
 import { describe, it } from "@std/testing/bdd";
 import {
     openApiParameter,
+    openApiRequestBody,
     openApiResponse,
     type ParameterType,
+    type RequestType,
     type ResponseType,
 } from "./helpers.ts";
 
@@ -125,5 +127,33 @@ it(openApiResponseTest, "should return multiple responses", () => {
                 },
             },
         },
+    });
+});
+
+const openApiRequestBodyTest = describe(openApiRequestBody.name);
+
+it(openApiRequestBodyTest, "should return request body", () => {
+    const data = {
+        description: "User Profile",
+        required: true,
+        schema: {
+            type: "object",
+            properties: {
+                name: {
+                    type: "string",
+                },
+            },
+            required: ["name"],
+        },
+    } satisfies RequestType;
+    const requestBody = openApiRequestBody(data);
+    assertEquals(requestBody, {
+        description: data.description,
+        content: {
+            "application/json": {
+                schema: data.schema,
+            },
+        },
+        required: data.required,
     });
 });

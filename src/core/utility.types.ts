@@ -12,7 +12,7 @@ export type JsonType = {
   [x: string]:
     | string
     | boolean
-    | boolean
+    | number
     | null
     | undefined
     | JsonType

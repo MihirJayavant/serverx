@@ -25,8 +25,9 @@ export const requestBody = openApiRequestBody({
     },
 });
 
-export function handler({ body }: ActionContext<{ name: string }>) {
-    return successResult({ id: 5, name: body.name }, 201);
+export async function handler({ body }: ActionContext<{ name: string }>) {
+    const request = await body();
+    return successResult({ id: 5, name: request?.name }, 201);
 }
 
 export const responses = openApiResponse({

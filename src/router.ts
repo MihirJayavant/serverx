@@ -16,7 +16,7 @@ type Config = {
 
 export type ActionContext<TBody = unknown, TQuery = unknown, TParam = unknown> =
   {
-    body: TBody;
+    body: () => Promise<TBody>;
     query: TQuery;
     params: TParam;
     context: Context;
@@ -89,10 +89,7 @@ export class Router {
   ) {
     // deno-lint-ignore no-explicit-any
     return async (c: Context<any, any, any>) => {
-      let body;
-      if (c.req.valid("json")) {
-        body = await c.req.json();
-      }
+      const body = () => c.req.json();
       const params = c.req.param();
       const query = c.req.query();
       try {
@@ -103,6 +100,7 @@ export class Router {
           return c.json({ error: result.error }, result.status);
         }
       } catch (error) {
+        console.error(error);
         return c.json({ error }, 500);
       }
     };

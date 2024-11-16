@@ -6,5 +6,5 @@ import * as postPorfile from "./post-profile.action.ts";
 export const profileRouter = new Router({ basePath: "/profile" });
 
 profileRouter.addAction(getProfiles);
-profileRouter.addAction(getProfile);
 profileRouter.addAction(postPorfile);
+profileRouter.addAction(getProfile);

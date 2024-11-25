@@ -6,7 +6,7 @@
 import type { FilteringParams, SortingParams } from "./filters.ts";
 
 /**
- * Input type for Offset-Based Pagination
+ * Input type for Offset-Based Pagination in rest handler
  */
 export type OffsetPaginationParams = {
   page: number; // Current page number

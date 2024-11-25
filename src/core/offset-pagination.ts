@@ -3,56 +3,49 @@
  * Helper functions for offset pagination
  */
 
-// Pagination Input
-export type PaginationParams = {
+import type { FilteringParams, SortingParams } from "./filters.ts";
+
+/**
+ * Input type for Offset-Based Pagination
+ */
+export type OffsetPaginationParams = {
     page: number; // Current page number
-    pageSize: number; // Number of items per page
-};
-
-// Sorting Input
-export type SortingParams = {
-    field: string; // Field to sort by
-    order: "asc" | "desc"; // Sorting order: ascending or descending
-    priority: number; // Sorting priority
-};
-
-export type FilterValueType = string | string[];
-
-// Filtering Input
-export type FilteringParams = {
-    [key: string]: FilterValueType; // key-value pairs for filters
-};
-
-// Pagination Result
-export type PaginatedResult<T> = {
-    data: T[]; // Current page data
-    totalItems: number; // Total number of items
-    totalPages: number; // Total pages
-    currentPage: number; // Current page number
     pageSize: number; // Number of items per page
     filters?: FilteringParams; // Applied filters
     sort?: SortingParams; // Applied sorting
 };
 
+/**
+ * Output type for Offset-Based Pagination
+ */
+export type OffsetPaginatedResult<T> = {
+    data: T[]; // Current page data
+    totalItems: number; // Total number of items
+    totalPages: number; // Total pages
+    currentPage: number; // Current page number
+    pageSize: number; // Number of items per page
+};
+
+/**
+ * Input type for Offset-Based Pagination
+ */
 type OffsetPaginationInput<T> = {
     items: T[];
     totalItems: number;
-    params: PaginationParams;
-    filters?: FilteringParams;
-    sort?: SortingParams;
+    page: number;
+    pageSize: number;
 };
 
 /**
  * Helper function for offset pagination
  *
- * @param {OffsetPaginationInput} { items, totalItems, params, filters, sort }
+ * @param {OffsetPaginationInput} result - Input object containing items, totalItems, page, and pageSize
  * @returns PaginatedResult containing the current page data and metadata
  */
-export function paginate<T>(
-    { items, totalItems, params, filters, sort }: OffsetPaginationInput<T>,
-): PaginatedResult<T> {
-    const { page, pageSize } = params;
-
+export function offsetPaginate<T>(
+    result: OffsetPaginationInput<T>,
+): OffsetPaginatedResult<T> {
+    const { items, totalItems, page, pageSize } = result;
     // Calculate total pages
     const totalPages = Math.ceil(totalItems / pageSize);
 
@@ -65,7 +58,5 @@ export function paginate<T>(
         totalPages,
         currentPage,
         pageSize,
-        filters,
-        sort,
     };
 }

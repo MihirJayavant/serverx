@@ -15,7 +15,7 @@ jobs:
       - name: Lint PR Title (Feature/Fix Rules)
         uses: amannn/action-semantic-pull-request@v5
         with:
-          scopes: server, util
+          scopes: server, util, repo
           requireScope: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

@@ -21,30 +21,7 @@ export type CursorPaginationParams = {
  */
 export type CursorPaginatedResult<T> = {
   data: T[]; // Current page data
+  limit: number; // Maximum number of items to fetch
   hasNextPage: boolean; // Whether there are more items after the current page
   hasPreviousPage: boolean; // Whether there are items before the current page
 };
-
-/**
- * Input type for Cursor-Based Pagination
- */
-export type CursorPaginationInput<T> = {
-  items: T[];
-  totalItems: number;
-  after?: string | null; // Cursor pointing to the item after which results should start
-  before?: string | null; // Cursor pointing to the item before which results should start (optional, for reverse pagination)
-  limit: number; // Maximum number of items to fetch
-};
-
-export function cursorPaginate<T>(
-  params: CursorPaginationInput<T>,
-): CursorPaginatedResult<T> {
-  const { items, after, before, limit } = params;
-  const hasNextPage = after ? items.length === limit : false;
-  const hasPreviousPage = before ? items.length === limit : false;
-  return {
-    data: items,
-    hasNextPage,
-    hasPreviousPage,
-  };
-}

@@ -1,10 +1,10 @@
-import { httpMethods } from "../../src/http/methods.ts";
-import { successResult } from "../../src/http/result.ts";
 import {
-  type ActionContext,
+  httpMethods,
   openApiRequestBody,
   openApiResponse,
-} from "../../src/index.ts";
+  successResult,
+} from "@serverx/utils";
+import { type ActionContext } from "@serverx/server";
 
 export const tags = ["user"];
 export const path = "/";

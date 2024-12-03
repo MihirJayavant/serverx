@@ -1,0 +1,20 @@
+{
+  "name": "@serverx/server",
+  "version": "0.3.0",
+  "exports": "./mod.ts",
+  "publish": {
+    "include": [
+      "LICENSE",
+      "README.md",
+      "./**/*.ts"
+    ]
+  },
+  "imports": {
+    "@hono/hono": "jsr:@hono/hono@^4.6.5"
+  },
+  "test": {
+    "include": [
+      "./**/*.spec.ts"
+    ]
+  }
+}

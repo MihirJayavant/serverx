@@ -1,9 +1,12 @@
 import { Hono } from "@hono/hono";
 import type { Context, Next } from "@hono/hono";
-import type { Router } from "./router.ts";
-import { swaggerUI } from "./open-api/ui.ts";
-import { OpenApi, type OpenApiUiOption } from "./open-api/open-api.ts";
-import { apiReference, type ApiReferenceOptions } from "./open-api/scalar.ts";
+import type { Router } from "./router/router.ts";
+import { swaggerUI } from "./middlewares/swagger/ui.ts";
+import { OpenApi, type OpenApiUiOption } from "@serverx/utils";
+import {
+  apiReference,
+  type ApiReferenceOptions,
+} from "./middlewares/scalar.ts";
 
 export class Server {
   #router = new Hono();

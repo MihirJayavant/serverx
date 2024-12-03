@@ -1,4 +1,4 @@
-import type { StatusCode } from "../http/result.ts";
+import type { StatusCode } from "../result/result.ts";
 
 type PrimitiveType = "string" | "number" | "boolean";
 

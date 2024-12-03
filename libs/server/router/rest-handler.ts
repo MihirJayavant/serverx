@@ -1,7 +1,6 @@
 import type { Context } from "@hono/hono";
 import type { RequestHandler } from "./request-handler.ts";
-import { isSuccess } from "./http/result.ts";
-import type { JsonType } from "./core/utility.types.ts";
+import { isSuccess, type JsonType } from "@serverx/utils";
 import type { TypedResponse } from "@hono/hono";
 
 type RestHandler<Input, Output extends JsonType> = {

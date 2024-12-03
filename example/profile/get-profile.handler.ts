@@ -1,5 +1,5 @@
-import { errorResult, successResult } from "../../src/http/result.ts";
-import { baseHandler } from "../../src/index.ts";
+import { errorResult, successResult } from "@serverx/utils";
+import { baseHandler } from "@serverx/server";
 import { z } from "@zod/zod";
 
 type Input = {

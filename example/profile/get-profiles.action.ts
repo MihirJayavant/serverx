@@ -1,6 +1,4 @@
-import { httpMethods } from "../../src/http/methods.ts";
-import { successResult } from "../../src/http/result.ts";
-import { openApiResponse } from "../../src/index.ts";
+import { httpMethods, openApiResponse, successResult } from "@serverx/utils";
 
 export const tags = ["user"];
 export const path = "/";

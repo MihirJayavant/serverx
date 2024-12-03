@@ -1,14 +1,15 @@
 import { Hono } from "@hono/hono";
 import type { Context, Next } from "@hono/hono";
-import type { HttpMethod } from "./http/methods.ts";
-import { type ApiDocs, OpenApi } from "./open-api/open-api.ts";
 import type {
+  ApiDocs,
+  HttpMethod,
   JsonType,
   OptionalExcept,
   Prettify,
+  Result,
   Task,
-} from "./core/utility.types.ts";
-import { isSuccess, type Result } from "./http/result.ts";
+} from "@serverx/utils";
+import { isSuccess, OpenApi } from "@serverx/utils";
 
 type Config = {
   basePath?: string;

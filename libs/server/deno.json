@@ -1,6 +1,7 @@
 {
   "name": "@serverx/server",
   "version": "0.3.0",
+  "license": "Apache-2.0",
   "exports": "./mod.ts",
   "publish": {
     "include": [

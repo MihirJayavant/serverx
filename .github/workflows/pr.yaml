@@ -25,7 +25,7 @@ jobs:
 
       - name: Enforce Branch Naming Convention
         run: |
-          if [[ ! $GITHUB_HEAD_REF =~ ^(feat|fix)\/[a-z0-9\-]+$ ]]; then
-            echo "Branch name must follow 'feat/<short-description>' or 'fix/<short-description>'"
+          if [[ ! $GITHUB_HEAD_REF =~ ^(feat|fix|chore)\/[a-z0-9\-]+$ ]]; then
+            echo "Branch name must follow 'feat/<short-description>' or 'fix/<short-description>' or chore/<short-description>' naming convention"
             exit 1
           fi

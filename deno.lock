@@ -86,13 +86,13 @@
   "workspace": {
     "dependencies": [
       "jsr:@std/assert@^1.0.8",
-      "jsr:@std/testing@^1.0.5"
+      "jsr:@std/testing@^1.0.5",
+      "npm:zod@^3.23.8"
     ],
     "members": {
       "libs/server": {
         "dependencies": [
-          "jsr:@hono/hono@^4.6.5",
-          "npm:zod@^3.23.8"
+          "jsr:@hono/hono@^4.6.5"
         ]
       }
     }

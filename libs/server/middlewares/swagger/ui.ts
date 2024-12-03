@@ -3,7 +3,7 @@ import { html } from "@hono/hono/html";
 import {
   type DistSwaggerUIOptions,
   renderSwaggerUIOptions,
-} from "./renderer.ts";
+} from "./swagger.ts";
 
 export type AssetURLs = {
   css: string[];

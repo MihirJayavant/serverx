@@ -1,9 +1,5 @@
-import { httpMethods } from "../../src/http/methods.ts";
-import {
-  type ActionContext,
-  openApiParameter,
-  openApiResponse,
-} from "../../src/index.ts";
+import { httpMethods, openApiParameter, openApiResponse } from "@serverx/utils";
+import { type ActionContext } from "@serverx/server";
 import { getProfileHandler } from "./get-profile.handler.ts";
 
 export const tags = ["user"];

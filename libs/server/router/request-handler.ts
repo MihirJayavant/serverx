@@ -1,5 +1,10 @@
-import type { JsonType, Task } from "./core/utility.types.ts";
-import { errorResult, type Result, statusCodes } from "./http/result.ts";
+import {
+  errorResult,
+  type JsonType,
+  type Result,
+  statusCodes,
+  type Task,
+} from "@serverx/utils";
 import type { AnyZodObject } from "@zod/zod";
 
 export type RequestHandler<Input, Output extends JsonType> = (

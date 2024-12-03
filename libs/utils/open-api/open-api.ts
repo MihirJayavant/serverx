@@ -1,5 +1,5 @@
-import type { OptionalExcept, Prettify } from "../core/utility.types.ts";
-import type { HttpMethod } from "../http/methods.ts";
+import type { OptionalExcept, Prettify } from "../utility.types.ts";
+import type { HttpMethod } from "../result/methods.ts";
 
 export type ApiDocs = {
   path: string;

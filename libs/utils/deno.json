@@ -1,0 +1,17 @@
+{
+  "name": "@serverx/utils",
+  "version": "0.3.0",
+  "exports": "./mod.ts",
+  "publish": {
+    "include": [
+      "LICENSE",
+      "README.md",
+      "src/**/*.ts"
+    ]
+  },
+  "test": {
+    "include": [
+      "./**/*.spec.ts"
+    ]
+  }
+}

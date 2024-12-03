@@ -1,4 +1,4 @@
-import type { JsonType } from "../core/utility.types.ts";
+import type { JsonType } from "../utility.types.ts";
 
 export const statusCodes = {
   Ok: 200,

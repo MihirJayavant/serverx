@@ -110,6 +110,6 @@ export class Router {
   addMiddleware(
     fn: (context: Context, next: Next) => Promise<void | Response>,
   ) {
-    this.#router.use("/", fn);
+    this.#router.use(fn);
   }
 }

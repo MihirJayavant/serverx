@@ -1,12 +1,13 @@
 import { Hono } from "@hono/hono";
 import type { Context, Next } from "@hono/hono";
 import type { Router } from "./router/router.ts";
-import { swaggerUI } from "./middlewares/swagger/ui.ts";
-import { OpenApi, type OpenApiUiOption } from "@serverx/utils";
+import { swaggerUI } from "./middlewares/swagger.ts";
 import {
-  apiReference,
-  type ApiReferenceOptions,
-} from "./middlewares/scalar.ts";
+  OpenApi,
+  type OpenApiUiOption,
+  type ScalarOption,
+} from "@serverx/utils";
+import { scalarUI } from "./middlewares/scalar.ts";
 
 export class Server {
   #router = new Hono();
@@ -27,24 +28,14 @@ export class Server {
     });
   }
 
-  addSwagger(path?: string, config?: OpenApiUiOption) {
-    this.#router.get(
-      path ?? "/swagger-docs",
-      swaggerUI({ url: config?.url ?? "/doc" }),
-    );
-  }
-
-  addScalar(path?: string, config?: ApiReferenceOptions) {
-    this.#router.get(
-      path ?? "/scalar-docs",
-      apiReference(config ?? { spec: { url: "/doc" } }),
-    );
+  addOpenApiUi(path: string, fn: (c: Context) => Response) {
+    this.#router.get(path, fn);
   }
 
   addMiddleware(
     fn: (context: Context, next: Next) => Promise<void | Response>,
   ) {
-    this.#router.use("/", fn);
+    this.#router.use(fn);
   }
 
   serve(

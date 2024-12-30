@@ -42,7 +42,7 @@ function createScript(configuration: ScalarOption) {
   `;
 }
 
-export function scalarUIGen(options: ScalarOption) {
+export function scalarUIGen(options: ScalarOption): string {
   return `
     <!DOCTYPE html>
     <html>

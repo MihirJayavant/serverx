@@ -48,7 +48,7 @@ function swaggerUITrigger(options: SwaggerUIOptions) {
   `;
 }
 
-export function swaggerUIGen(options: SwaggerUIOptions) {
+export function swaggerUIGen(options: SwaggerUIOptions): string {
   return `
       <html lang="en">
         <head>

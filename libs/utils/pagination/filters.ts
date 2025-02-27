@@ -1,20 +1,28 @@
 /**
- * Sorting Input
+ * @module Filters
+ * Helper functions for filtering and sorting
+ */
+
+/**
+ * Sorting parameters
+ * @property {string} field - Field to sort by
+ * @property {"asc" | "desc"} order - Sorting order: ascending or descending
+ * @property {number} priority - Sorting priority
  */
 export type SortingParams = {
-  field: string; // Field to sort by
-  order: "asc" | "desc"; // Sorting order: ascending or descending
-  priority: number; // Sorting priority
+  field: string;
+  order: "asc" | "desc";
+  priority: number;
 };
 
 /**
- * Filtering value type
+ * Value type for filtering
  */
 export type FilterValueType = string | string[];
 
 /**
- * Filtering Input
+ * Key-value pairs for filters
  */
 export type FilteringParams = {
-  [key: string]: FilterValueType; // key-value pairs for filters
+  [key: string]: FilterValueType;
 };

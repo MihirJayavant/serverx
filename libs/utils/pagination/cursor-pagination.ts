@@ -6,18 +6,27 @@
 import type { FilteringParams, SortingParams } from "./filters.ts";
 
 /**
- * Input type for Cursor-Based Pagination in rest handler
+ * CursorPaginationParams
+ * @property {string} [after] - Cursor pointing to the item after which results should start
+ * @property {string} [before] - Cursor pointing to the item before which results should start (optional, for reverse pagination)
+ * @property {number} limit - Maximum number of items to fetch
+ * @property {FilteringParams} [filters] - Applied filters
+ * @property {SortingParams} [sort] - Applied sorting
  */
 export type CursorPaginationParams = {
-  after?: string | null; // Cursor pointing to the item after which results should start
-  before?: string | null; // Cursor pointing to the item before which results should start (optional, for reverse pagination)
-  limit: number; // Maximum number of items to fetch
-  filters?: FilteringParams; // Applied filters
-  sort?: SortingParams; // Applied sorting
+  after?: string | null;
+  before?: string | null;
+  limit: number;
+  filters?: FilteringParams;
+  sort?: SortingParams;
 };
 
 /**
- * Output type for Cursor-Based Pagination
+ * CursorPaginatedResult
+ * @property {T[]} data - Current page data
+ * @property {number} limit - Maximum number of items to fetch
+ * @property {boolean} hasNextPage - Whether there are more items after the current page
+ * @property {boolean} hasPreviousPage - Whether there are items before the current page
  */
 export type CursorPaginatedResult<T> = {
   data: T[]; // Current page data

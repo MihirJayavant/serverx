@@ -1,5 +1,59 @@
 # ServerX Utils
 
-- Helper packages needed on day to day basis for creating apis
+[![JSR](https://jsr.io/badges/@serverx/utils)](https://jsr.io/@serverx/utils)
 
-### Work in progress
+A collection of utility functions and helper packages commonly used in API
+development.
+
+## Features
+
+- HTTP Response Helpers
+- Common Validation Functions
+- Offset and Cursor based Pagination Helpers
+- Error Handling Utilities
+- Open Api helpers
+
+## Installation
+
+```bash
+deno add jsr:@serverx/utils
+```
+
+## Usage
+
+```typescript
+import { httpMethods, openApiParameter, openApiResponse } from "@serverx/utils";
+
+export const method = httpMethods.GET;
+
+export const parameters = openApiParameter(
+  {
+    name: "userId",
+    in: "path",
+    description: "ID of User",
+    required: true,
+    schema: {
+      type: "string",
+    },
+  },
+);
+
+export const responses = openApiResponse({
+  status: 200,
+  description: "User Profile",
+  schema: {
+    type: "object",
+    properties: {
+      name: {
+        type: "string",
+      },
+    },
+    required: ["name"],
+  },
+});
+```
+
+## Documentation
+
+For detailed documentation and examples, please refer to the our
+[docs](https://github.com/MihirJayavant/serverx/wiki/Utils).

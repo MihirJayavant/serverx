@@ -12,6 +12,12 @@ export const themes = [
   "none",
 ] as const;
 
+/**
+ * Scalar option
+ * @property spec - The url of the scalar api reference.
+ * @property cdn - The cdn url of the scalar api reference.
+ * @property theme - The theme of the scalar api reference.
+ */
 export type ScalarOption = {
   spec: {
     url: string;
@@ -42,6 +48,11 @@ function createScript(configuration: ScalarOption) {
   `;
 }
 
+/**
+ * Helper function to generate scalar ui
+ * @param options - The options for the scalar ui.
+ * @returns - The generated scalar ui.
+ */
 export function scalarUIGen(options: ScalarOption): string {
   return `
     <!DOCTYPE html>

@@ -1,11 +1,5 @@
 ## Pull Request Title
 
-<!-- Provide a concise and descriptive title. -->
-
----
-
-## Summary
-
 <!-- Describe the purpose of this pull request in one or two sentences. -->
 
 ---
@@ -26,7 +20,8 @@
 <!-- If this PR fixes or is related to existing issues or GitHub Project tasks, reference them here. -->
 
 - Fixes #<issue-number>
-- Related to `<task link from GitHub Projects>`
+- Related to
+  [https://github.com/users/MihirJayavant/projects/2/views/2?pane=issue&itemId=xxxx](https://github.com/users/MihirJayavant/projects/2/views/2?pane=issue&itemId=xxxx)
 
 ---
 

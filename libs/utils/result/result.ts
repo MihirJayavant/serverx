@@ -1,3 +1,8 @@
+/**
+ * @file result.ts
+ * Helper functions for handling API results
+ */
+
 import type { JsonType } from "../utility.types.ts";
 
 export const statusCodes = {

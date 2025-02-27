@@ -1,5 +1,5 @@
 /**
- * @module Filters
+ * @file filters.ts
  * Helper functions for filtering and sorting
  */
 

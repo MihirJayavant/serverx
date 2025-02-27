@@ -1,5 +1,5 @@
 /**
- * @module cursor-pagination
+ * @file cursor-pagination.ts
  * Helper functions for cursor pagination
  */
 

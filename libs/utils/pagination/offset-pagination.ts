@@ -1,5 +1,5 @@
 /**
- * @module offset-pagination
+ * @file offset-pagination.ts
  * Helper functions for offset pagination
  */
 

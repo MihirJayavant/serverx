@@ -1,3 +1,8 @@
+/**
+ * @module Utils
+ * Common utility functions and types
+ */
+
 export * from "./utility.types.ts";
 export * from "./result/result.ts";
 export * from "./result/methods.ts";

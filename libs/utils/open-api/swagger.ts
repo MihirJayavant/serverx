@@ -2,6 +2,11 @@ function renderSwaggerUIOptions(options: { url: string }) {
   return `url: '${options.url}'`;
 }
 
+/**
+ * Asset url
+ * @property css - The css files to be loaded.
+ * @property js - The js files to be loaded.
+ */
 export type AssetURLs = {
   css: string[];
   js: string[];
@@ -18,6 +23,11 @@ const remoteAssets = ({ version }: { version?: string }): AssetURLs => {
   };
 };
 
+/**
+ * Swagger UI options
+ * @property url - The url of the swagger ui.
+ * @property version - The version of the swagger ui.
+ */
 export type SwaggerUIOptions = {
   url: string;
   version?: string;
@@ -48,6 +58,11 @@ function swaggerUITrigger(options: SwaggerUIOptions) {
   `;
 }
 
+/**
+ * Helper function to generate swagger ui
+ * @param options - The options for the swagger ui.
+ * @returns - The generated swagger ui.
+ */
 export function swaggerUIGen(options: SwaggerUIOptions): string {
   return `
       <html lang="en">

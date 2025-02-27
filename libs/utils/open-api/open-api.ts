@@ -1,6 +1,9 @@
 import type { OptionalExcept, Prettify } from "../utility.types.ts";
 import type { HttpMethod } from "../result/methods.ts";
 
+/**
+ * Its Open api documentation type.
+ */
 export type ApiDocs = {
   path: string;
   description: string;
@@ -17,6 +20,9 @@ type AddAction = Prettify<
   }
 >;
 
+/**
+ * Its Open api ui option.
+ */
 export type OpenApiUiOption = {
   url: string;
   openapi: string;
@@ -26,6 +32,9 @@ export type OpenApiUiOption = {
   };
 };
 
+/**
+ * Its Open api class to genearate open api documentation in json format
+ */
 export class OpenApi {
   readonly #docs: ApiDocs[] = [];
 

@@ -1,5 +1,11 @@
-import type { Context } from "@hono/hono";
-import { openApiResponse } from "@serverx/utils";
+import {
+  errorResult,
+  openApiResponse,
+  statusCodes,
+  successResult,
+} from "@serverx/utils";
+import { baseHandler } from "../router/request-handler.ts";
+import { z } from "@zod/zod";
 
 export type HealthCheckDependency = {
   name: string;
@@ -10,39 +16,55 @@ export type HealthCheckOptions = {
   dependencies?: HealthCheckDependency[];
 };
 
-export function healthCheckMiddleware(options: HealthCheckOptions = {}) {
-  return async (c: Context) => {
-    try {
-      const checks = options.dependencies?.map(async (dep) => ({
-        name: dep.name,
-        healthy: await dep.check(),
-      })) ?? [];
+async function handler(options: HealthCheckOptions = {}) {
+  try {
+    const checks = options.dependencies?.map(async (dep) => ({
+      name: dep.name,
+      healthy: await dep.check(),
+    })) ?? [];
 
-      const results = await Promise.all(checks);
-      const allHealthy = results.every((r) => r.healthy);
+    const results = await Promise.all(checks);
+    const allHealthy = results.every((r) => r.healthy);
 
-      const memoryInfo = Deno.systemMemoryInfo();
+    const memoryInfo = Deno.systemMemoryInfo();
 
-      const systemMetrics = {
-        cpuLoad: Deno.loadavg()[0], // 1-minute load average
-        freeMemory: memoryInfo.free,
-        totalMemory: memoryInfo.total,
-      };
+    const systemMetrics = {
+      cpuLoad: Deno.loadavg()[0], // 1-minute load average
+      freeMemory: memoryInfo.free,
+      totalMemory: memoryInfo.total,
+    };
 
-      c.json({
-        status: allHealthy ? "healthy" : "unhealthy",
-        timestamp: new Date().toISOString(),
-        checks: results,
-        systemMetrics,
-      }, { status: allHealthy ? 200 : 500 });
-    } catch (error) {
-      c.json({
+    const response = {
+      timestamp: new Date().toISOString(),
+      checks: results,
+      systemMetrics,
+    };
+
+    if (!allHealthy) {
+      return errorResult({
+        ...response,
         status: "unhealthy",
-        timestamp: new Date().toISOString(),
-        error: error,
-      }, { status: 500 });
+      }, statusCodes.InternalServerError);
     }
-  };
+
+    return successResult({
+      ...response,
+      status: "healthy",
+    });
+  } catch (error) {
+    return errorResult({
+      status: "unhealthy",
+      timestamp: new Date().toISOString(),
+      error,
+    }, statusCodes.InternalServerError);
+  }
+}
+
+export function healthCheckBaseHandler(options: HealthCheckOptions = {}) {
+  return baseHandler({
+    handler: () => handler(options),
+    validationSchema: z.any(),
+  });
 }
 
 export function healthCheckResponse() {

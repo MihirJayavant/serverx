@@ -1,4 +1,4 @@
-import { errorResult, successResult } from "@serverx/utils";
+import { errorResult, statusCodes, successResult } from "@serverx/utils";
 import { baseHandler } from "@serverx/server";
 import { z } from "@zod/zod";
 
@@ -19,7 +19,7 @@ const database = [{ id: 1, name: "Peter Pan" }, { id: 2, name: "Mac Milan" }];
 function handler(input: Input) {
   const data = database.find((d) => d.id === input.id);
   if (!data) {
-    return errorResult(404, "User not found");
+    return errorResult("User not found", statusCodes.NotFound);
   }
   return successResult<Output>(data);
 }

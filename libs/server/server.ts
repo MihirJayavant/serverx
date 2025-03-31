@@ -17,7 +17,7 @@ export class Server {
   }
 
   addOpenApi(config: OpenApiUiOption) {
-    this.#router.get(config.url ?? "/doc", (c) => {
+    this.#router.get(config.url ?? "/api-docs", (c) => {
       return c.json(this.#apiDocs.getOpenApiJsonDoc(config));
     });
   }

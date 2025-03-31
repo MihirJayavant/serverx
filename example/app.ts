@@ -7,13 +7,13 @@ app.addMiddleware(cors());
 
 app.addRouter(profileRouter);
 app.addOpenApi({
-  url: "/doc",
+  url: "/api-docs",
   openapi: "3.0.0",
   info: { title: "Profile API", version: "1.0.0" },
 });
 
-app.addOpenApiUi("/swagger-docs", swaggerUI({ url: "/doc" }));
-app.addOpenApiUi("/scalar-docs", scalarUI({ spec: { url: "/doc" } }));
+app.addOpenApiUi("/swagger-docs", swaggerUI({ url: "/api-docs" }));
+app.addOpenApiUi("/scalar-docs", scalarUI({ spec: { url: "/api-docs" } }));
 
 app.serve({ port: 3100, hostname: "127.0.0.1" });
 

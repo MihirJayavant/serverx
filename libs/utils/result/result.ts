@@ -72,8 +72,8 @@ export function internalServerError(
 }
 
 export function errorResult(
-  status: ErrorStatusCode,
   error: unknown,
+  status: ErrorStatusCode,
 ): ErrorResult {
   return {
     status,

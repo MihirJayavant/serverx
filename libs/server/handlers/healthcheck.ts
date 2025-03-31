@@ -1,8 +1,11 @@
 import {
   errorResult,
+  type OpenApiResponse,
   openApiResponse,
+  type Result,
   statusCodes,
   successResult,
+  type Task,
 } from "@serverx/utils";
 import { baseHandler } from "../router/request-handler.ts";
 import { z } from "@zod/zod";
@@ -16,7 +19,23 @@ export type HealthCheckOptions = {
   dependencies?: HealthCheckDependency[];
 };
 
-async function handler(options: HealthCheckOptions = {}) {
+export type HealthCheckResponse = {
+  status: string;
+  timestamp: string;
+  checks: {
+    name: string;
+    healthy: boolean;
+  }[];
+  systemMetrics: {
+    cpuLoad: number;
+    freeMemory: number;
+    totalMemory: number;
+  };
+};
+
+async function handler(
+  options: HealthCheckOptions = {},
+): Promise<Result<HealthCheckResponse>> {
   try {
     const checks = options.dependencies?.map(async (dep) => ({
       name: dep.name,
@@ -60,14 +79,17 @@ async function handler(options: HealthCheckOptions = {}) {
   }
 }
 
-export function healthCheckBaseHandler(options: HealthCheckOptions = {}) {
-  return baseHandler({
+export function healthCheckHandler(
+  options: HealthCheckOptions = {},
+): Task<Result<HealthCheckResponse>> {
+  const h = baseHandler({
     handler: () => handler(options),
     validationSchema: z.any(),
   });
+  return h(undefined);
 }
 
-export function healthCheckResponse() {
+export function healthCheckResponse(): OpenApiResponse {
   return openApiResponse({
     status: 200,
     description: "Health Check",

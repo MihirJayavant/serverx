@@ -1,11 +1,16 @@
-import { cors, scalarUI, Server, swaggerUI } from "@serverx/server";
+import { cors, Router, scalarUI, Server, swaggerUI } from "@serverx/server";
 import { profileRouter } from "./profile/profile.ts";
+import * as healthcheck from "./healthcheck.ts";
 
 const app = new Server();
 
 app.addMiddleware(cors());
 
+const health = new Router();
+health.addAction(healthcheck);
+app.addRouter(health);
 app.addRouter(profileRouter);
+
 app.addOpenApi({
   url: "/api-docs",
   openapi: "3.0.0",

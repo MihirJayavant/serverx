@@ -6,9 +6,16 @@ export const path = "/healthcheck";
 export const method = httpMethods.GET;
 export const description = "Returns healthcheck status";
 
+function checkDb() {
+  return Promise.resolve(true);
+}
+
 export function handler() {
   return healthCheckHandler({
-    dependencies: [],
+    dependencies: [{
+      name: "db",
+      check: checkDb,
+    }],
   });
 }
 

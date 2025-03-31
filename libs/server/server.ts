@@ -1,7 +1,8 @@
 import { Hono } from "@hono/hono";
 import type { Context, Next } from "@hono/hono";
-import type { Router } from "./router/router.ts";
+import { type Action, Router } from "./router/router.ts";
 import { OpenApi, type OpenApiUiOption } from "@serverx/utils";
+import type { HealthCheckResponse } from "./handlers/healthcheck.ts";
 
 export class Server {
   #router = new Hono();
@@ -17,7 +18,7 @@ export class Server {
   }
 
   addOpenApi(config: OpenApiUiOption) {
-    this.#router.get(config.url ?? "/doc", (c) => {
+    this.#router.get(config.url ?? "/api-docs", (c) => {
       return c.json(this.#apiDocs.getOpenApiJsonDoc(config));
     });
   }
@@ -30,6 +31,12 @@ export class Server {
     fn: (context: Context, next: Next) => Promise<void | Response>,
   ) {
     this.#router.use(fn);
+  }
+
+  addHealthCheck<T extends HealthCheckResponse>(action: Action<T>) {
+    const health = new Router();
+    health.addAction(action);
+    this.addRouter(health);
   }
 
   serve(

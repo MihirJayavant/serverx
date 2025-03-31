@@ -6,3 +6,4 @@ export * from "./router/rest-handler.ts";
 export * from "./router/request-handler.ts";
 export * from "./middlewares/swagger.ts";
 export * from "./middlewares/scalar.ts";
+export * from "./handlers/healthcheck.ts";

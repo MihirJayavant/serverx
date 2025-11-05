@@ -27,7 +27,11 @@ export const statusCodes = {
 
 export type StatusCode = (typeof statusCodes)[keyof typeof statusCodes];
 
-export type SuccessStatusCode = 200 | 201 | 202 | 204;
+export type ContentfulSuccessStatusCode = 200 | 201 | 202;
+export type NonContentfulSuccessStatusCode = 204;
+export type SuccessStatusCode =
+  | ContentfulSuccessStatusCode
+  | NonContentfulSuccessStatusCode;
 
 export type RedirectStatusCode = 301 | 302 | 304;
 
@@ -36,10 +40,19 @@ export type ErrorStatusCode = Exclude<
   SuccessStatusCode | RedirectStatusCode
 >;
 
-export type SuccessResult<T extends JsonType> = {
-  status: SuccessStatusCode | RedirectStatusCode;
+export type ContentfulSuccessResult<T extends JsonType> = {
+  status: ContentfulSuccessStatusCode;
   data: T;
 };
+
+export type NonContentfulSuccessResult = {
+  status: NonContentfulSuccessStatusCode | RedirectStatusCode;
+  data: null;
+};
+
+export type SuccessResult<T extends JsonType> =
+  | ContentfulSuccessResult<T>
+  | NonContentfulSuccessResult;
 
 export type ErrorResult = {
   status: ErrorStatusCode;
@@ -82,11 +95,17 @@ export function errorResult(
 }
 
 export function successResult<T extends JsonType>(
-  data: T,
-  status: SuccessStatusCode = 200,
+  data: T | null,
+  status: SuccessStatusCode | RedirectStatusCode = 200,
 ): SuccessResult<T> {
+  if (status === 204 || (status >= 300 && status < 400)) {
+    return {
+      data: null,
+      status: status as NonContentfulSuccessStatusCode | RedirectStatusCode,
+    };
+  }
   return {
-    data,
-    status,
+    data: data as T,
+    status: status as ContentfulSuccessStatusCode,
   };
 }

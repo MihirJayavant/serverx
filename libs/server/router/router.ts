@@ -9,7 +9,11 @@ import type {
   Result,
   Task,
 } from "@serverx/utils";
-import { isSuccess, OpenApi } from "@serverx/utils";
+import {
+  type ContentfulSuccessStatusCode,
+  isSuccess,
+  OpenApi,
+} from "@serverx/utils";
 
 type Config = {
   basePath?: string;
@@ -96,7 +100,16 @@ export class Router {
       try {
         const result = await handler({ body, params, query, context: c });
         if (isSuccess(result)) {
-          return c.json(result.data, result.status);
+          // For non-contentful responses (204 and redirects), use newResponse
+          if (
+            result.status === 204 ||
+            (result.status >= 300 && result.status < 400)
+          ) {
+            return c.newResponse(null, result.status);
+          }
+          // For contentful success responses
+          const status = result.status as ContentfulSuccessStatusCode;
+          return c.json(result.data, status);
         } else {
           return c.json({ error: result.error }, result.status);
         }

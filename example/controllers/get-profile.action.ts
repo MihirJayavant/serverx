@@ -1,6 +1,6 @@
 import { httpMethods, openApiParameter, openApiResponse } from "@serverx/utils";
 import { type ActionContext } from "@serverx/server";
-import { getProfileHandler } from "./get-profile.handler.ts";
+import { getProfileHandler } from "../user/get-profile.handler.ts";
 
 export const tags = ["user"];
 export const path = "/:userId";

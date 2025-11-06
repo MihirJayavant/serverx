@@ -4,15 +4,15 @@ class UserRepository {
   private users: User[] = [
     {
       id: 1,
-      firstName: "Peter",
-      lastName: "Pan",
+      firstname: "Peter",
+      lastname: "Pan",
       email: "peter.pan@example.com",
       age: 30,
     },
     {
       id: 2,
-      firstName: "Mac",
-      lastName: "Milan",
+      firstname: "Mac",
+      lastname: "Milan",
       email: "mac.milan@example.com",
       age: 25,
     },

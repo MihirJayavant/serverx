@@ -3,7 +3,8 @@
   "license": "Apache-2.0",
   "tasks": {
     "user-api": "deno run --allow-net=127.0.0.1:3100 --allow-sys=\"systemMemoryInfo,loadavg\" --watch ./example/app.ts",
-    "util-docs": "deno doc --html --name=\"@server/utils\" ./libs/utils/mod.ts"
+    "util-docs": "deno doc --html --name=\"@server/utils\" ./libs/utils/mod.ts",
+    "test:api": "deno test example/**/*.spec.ts --allow-net=127.0.0.1:3100"
   },
   "imports": {
     "@std/assert": "jsr:@std/assert@^1.0.15",

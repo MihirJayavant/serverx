@@ -1,5 +1,5 @@
 import { cors, scalarUI, Server, swaggerUI } from "@serverx/server";
-import { profileRouter } from "./profile/profile.ts";
+import { profileRouter } from "./controllers/profile.ts";
 import * as healthcheck from "./healthcheck.ts";
 
 const app = new Server();

@@ -1,6 +1,7 @@
 import { httpMethods, openApiParameter, openApiResponse } from "@serverx/utils";
 import { type ActionContext } from "@serverx/server";
 import { getProfileHandler } from "../user/get-profile.handler.ts";
+import { userSchema } from "../user/user.ts";
 
 export const tags = ["user"];
 export const path = "/:userId";
@@ -27,14 +28,6 @@ export function handler(
 
 export const responses = openApiResponse({
   status: 200,
-  description: "User Profile",
-  schema: {
-    type: "object",
-    properties: {
-      name: {
-        type: "string",
-      },
-    },
-    required: ["name"],
-  },
+  description: "Get User Profile",
+  schema: userSchema,
 });

@@ -1,4 +1,6 @@
-import { httpMethods, openApiResponse, successResult } from "@serverx/utils";
+import { httpMethods, openApiResponse } from "@serverx/utils";
+import { userSchema } from "../user/user.ts";
+import { getProfilesHandler } from "../user/get-profiles.handler.ts";
 
 export const tags = ["user"];
 export const path = "/";
@@ -6,13 +8,7 @@ export const method = httpMethods.GET;
 export const description = "Returns User Profile";
 
 export function handler() {
-  return successResult({
-    result: [{
-      name: "James Turner",
-    }, {
-      name: "Joe Turner",
-    }],
-  }, 200);
+  return getProfilesHandler(undefined);
 }
 
 export const responses = openApiResponse({
@@ -20,14 +16,6 @@ export const responses = openApiResponse({
   description: "User Profile",
   schema: {
     type: "array",
-    items: {
-      type: "object",
-      properties: {
-        name: {
-          type: "string",
-        },
-      },
-      required: ["name"],
-    },
+    items: userSchema,
   },
 });

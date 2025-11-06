@@ -14,6 +14,6 @@ function handler(_: Input) {
   return successResult<Output>({ data });
 }
 
-export const getProfileHandler = baseHandler({
+export const getProfilesHandler = baseHandler({
   handler,
 });

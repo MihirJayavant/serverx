@@ -1,5 +1,5 @@
 import { httpMethods, openApiResponse } from "@serverx/utils";
-import { userSchema } from "../user/user.ts";
+import { userOpenApiSchema } from "../user/user.ts";
 import { getProfilesHandler } from "../user/get-profiles.handler.ts";
 
 export const tags = ["user"];
@@ -16,6 +16,6 @@ export const responses = openApiResponse({
   description: "User Profile",
   schema: {
     type: "array",
-    items: userSchema,
+    items: userOpenApiSchema,
   },
 });

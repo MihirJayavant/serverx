@@ -5,7 +5,7 @@ import {
   statusCodes,
   type Task,
 } from "@serverx/utils";
-import type { ZodAny, ZodObject } from "@zod/zod";
+import { z, type ZodAny, type ZodObject } from "@zod/zod";
 
 export type RequestHandler<Input, Output extends JsonType> = (
   payload: Input,
@@ -22,7 +22,10 @@ export function baseHandler<Input, Output extends JsonType>(
   return (input: Input) => {
     const validation = option.validationSchema?.safeParse(input);
     if (validation?.success === false) {
-      return errorResult(validation.error.message, statusCodes.BadRequest);
+      return errorResult(
+        z.prettifyError(validation.error),
+        statusCodes.BadRequest,
+      );
     }
     return option.handler(input);
   };

@@ -4,7 +4,7 @@ import {
   openApiResponse,
 } from "@serverx/utils";
 import { type ActionContext } from "@serverx/server";
-import { User, userSchema } from "../user/user.ts";
+import { User, userOpenApiSchema } from "../user/user.ts";
 import { postProfileHandler } from "../user/post-profile.handler.ts";
 
 export const tags = ["user"];
@@ -15,7 +15,7 @@ export const description = "Add User Profile";
 export const requestBody = openApiRequestBody({
   description: "User Profile",
   required: true,
-  schema: userSchema,
+  schema: userOpenApiSchema,
 });
 
 export async function handler({ body }: ActionContext<User>) {
@@ -26,5 +26,5 @@ export async function handler({ body }: ActionContext<User>) {
 export const responses = openApiResponse({
   status: 201,
   description: "User Profile Created",
-  schema: userSchema,
+  schema: userOpenApiSchema,
 });

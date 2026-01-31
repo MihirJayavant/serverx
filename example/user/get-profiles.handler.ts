@@ -9,8 +9,12 @@ type Output = {
   data: User[];
 };
 
-function handler(_: Input) {
-  const data = userRepository.getAllUsers();
+function handler(input: Input) {
+  console.log(input);
+  const data = userRepository.getAllUsers({
+    limit: input.pageSize ?? 10,
+    offset: ((input.page ?? 1) - 1) * (input.pageSize ?? 10),
+  });
   return successResult<Output>({ data });
 }
 

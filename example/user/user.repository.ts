@@ -16,14 +16,70 @@ class UserRepository {
       email: "mac.milan@example.com",
       age: 25,
     },
+    {
+      id: 3,
+      firstname: "Alice",
+      lastname: "Smith",
+      email: "alice.smith@example.com",
+      age: 28,
+    },
+    {
+      id: 4,
+      firstname: "Bob",
+      lastname: "Jones",
+      email: "bob.jones@example.com",
+      age: 35,
+    },
+    {
+      id: 5,
+      firstname: "Charlie",
+      lastname: "Brown",
+      email: "charlie.brown@example.com",
+      age: 22,
+    },
+    {
+      id: 6,
+      firstname: "Diana",
+      lastname: "Prince",
+      email: "diana.prince@example.com",
+      age: 29,
+    },
+    {
+      id: 7,
+      firstname: "Edward",
+      lastname: "Norton",
+      email: "edward.norton@example.com",
+      age: 42,
+    },
+    {
+      id: 8,
+      firstname: "Fiona",
+      lastname: "Gallagher",
+      email: "fiona.gallagher@example.com",
+      age: 26,
+    },
+    {
+      id: 9,
+      firstname: "George",
+      lastname: "Costanza",
+      email: "george.costanza@example.com",
+      age: 38,
+    },
+    {
+      id: 10,
+      firstname: "Hannah",
+      lastname: "Baker",
+      email: "hannah.baker@example.com",
+      age: 21,
+    },
   ];
 
   getUserById(id: number): User | undefined {
     return this.users.find((user) => user.id === id);
   }
 
-  getAllUsers(): User[] {
-    return this.users;
+  getAllUsers(input: { offset: number; limit: number }): User[] {
+    return this.users.slice(input.offset, input.offset + input.limit);
   }
 
   addUser(user: User): void {

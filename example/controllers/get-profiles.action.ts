@@ -1,6 +1,8 @@
 import {
   httpMethods,
   OffsetPaginationParams,
+  offsetPaginationParamSchema,
+  OpenApiQueryTransform,
   openApiResponse,
 } from "@serverx/utils";
 import { userOpenApiSchema } from "../user/user.ts";
@@ -12,10 +14,17 @@ export const path = "/";
 export const method = httpMethods.GET;
 export const description = "Returns User Profile";
 
+export const parameters = offsetPaginationParamSchema;
+
 export function handler(
-  { query }: ActionQueryContext<OffsetPaginationParams>,
+  { query }: ActionQueryContext<OpenApiQueryTransform<OffsetPaginationParams>>,
 ) {
-  return getProfilesHandler(query);
+  return getProfilesHandler({
+    page: Number(query.page) || 1,
+    pageSize: Number(query.pageSize) || 10,
+    filters: query.filters,
+    sort: query.sort,
+  });
 }
 
 export const responses = openApiResponse({

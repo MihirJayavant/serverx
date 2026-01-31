@@ -1,9 +1,9 @@
-import { successResult } from "@serverx/utils";
+import { OffsetPaginationParams, successResult } from "@serverx/utils";
 import { baseHandler } from "@serverx/server";
 import { User } from "./user.ts";
 import { userRepository } from "./user.repository.ts";
 
-type Input = undefined;
+type Input = OffsetPaginationParams;
 
 type Output = {
   data: User[];

@@ -28,6 +28,12 @@ export type ActionContext<TBody = unknown, TQuery = unknown, TParam = unknown> =
   };
 
 export type ActionBodyContext<TBody> = ActionContext<TBody>;
+export type ActionQueryContext<TQuery> = ActionContext<unknown, TQuery>;
+export type ActionParamContext<TParam> = ActionContext<
+  unknown,
+  unknown,
+  TParam
+>;
 
 export type Action<TResult extends JsonType> = Prettify<
   {

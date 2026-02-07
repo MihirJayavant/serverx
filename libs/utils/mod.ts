@@ -14,3 +14,4 @@ export * from "./open-api/open-api.ts";
 export * from "./open-api/swagger.ts";
 export * from "./open-api/scalar.ts";
 export * from "./open-api/utility.types.ts";
+export * from "./http/client.ts";

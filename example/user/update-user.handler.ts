@@ -11,14 +11,14 @@ const schema = userValidationSchema;
 
 function handler(input: Input) {
   const existingUser = userRepository.getUserById(input.id);
-  if (existingUser) {
-    return errorResult("User already exists", statusCodes.Conflict);
+  if (!existingUser) {
+    return errorResult("User not found", statusCodes.NotFound);
   }
-  userRepository.addUser(input);
+  userRepository.updateUser(input);
   return successResult<Output>(input);
 }
 
-export const postUserHandler = baseHandler({
+export const updateUserHandler = baseHandler({
   handler,
   validationSchema: schema,
 });

@@ -6,7 +6,7 @@ import {
 } from "@serverx/utils";
 import { type ActionContext } from "@serverx/server";
 import { User, userOpenApiSchema } from "../../user/user.ts";
-import { putUserHandler } from "../../user/put-user.handler.ts";
+import { updateUserHandler } from "../../user/update-user.handler.ts";
 
 export const tags = ["user"];
 export const path = "/:userId";
@@ -35,7 +35,7 @@ export async function handler(
   { params, body }: ActionContext<User, unknown, { userId: string }>,
 ) {
   const request = await body();
-  return putUserHandler({ ...request, id: Number(params.userId) });
+  return updateUserHandler({ ...request, id: Number(params.userId) });
 }
 
 export const responses = openApiResponse({

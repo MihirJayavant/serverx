@@ -13,7 +13,10 @@ type Output = {
 };
 
 const schema = z.object({
-  id: z.number().min(1),
+  id: z.number()
+    .int("User ID must be an integer")
+    .min(1, "User ID must be a positive integer")
+    .positive("User ID must be positive"),
 });
 
 function handler(input: Input) {

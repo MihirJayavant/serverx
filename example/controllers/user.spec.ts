@@ -60,4 +60,96 @@ describe("User Controller", () => {
     const result = await response.json();
     assertEquals(!!result.error, true);
   });
+
+  it("should create a user for POST /user", async () => {
+    const userId = 99;
+    const userUrl = `${baseUrl}/user`;
+    const specificUserUrl = `${baseUrl}/user/${userId}`;
+
+    // Cleanup before test to ensure idempotency
+    await fetch(specificUserUrl, { method: "DELETE" }).then((res) =>
+      res.arrayBuffer()
+    );
+
+    const newUser = {
+      id: userId,
+      firstname: "John",
+      lastname: "Doe",
+      email: "john.doe@example.com",
+      age: 25,
+    };
+
+    const response = await fetch(userUrl, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(newUser),
+    });
+
+    assertEquals(response.status, 201);
+    const data = await response.json();
+    assertEquals(data, newUser);
+  });
+
+  it("should update a user for PUT /user/:id", async () => {
+    const userId = 99;
+    const specificUserUrl = `${baseUrl}/user/${userId}`;
+
+    // Ensure user exists (idempotent setup)
+    const user = {
+      id: userId,
+      firstname: "John",
+      lastname: "Doe",
+      email: "john.doe@example.com",
+      age: 25,
+    };
+
+    // Try to create, ignore if already exists
+    await fetch(`${baseUrl}/user`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(user),
+    }).then((res) => res.arrayBuffer());
+
+    const updatedUser = { ...user, firstname: "Johnny" };
+
+    const response = await fetch(specificUserUrl, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(updatedUser),
+    });
+
+    assertEquals(response.status, 200);
+    const data = await response.json();
+    assertEquals(data, updatedUser);
+  });
+
+  it("should delete a user for DELETE /user/:id", async () => {
+    const userId = 100;
+    const specificUserUrl = `${baseUrl}/user/${userId}`;
+
+    // Ensure user exists
+    await fetch(`${baseUrl}/user`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        id: userId,
+        firstname: "To",
+        lastname: "Delete",
+        email: "delete@example.com",
+        age: 30,
+      }),
+    }).then((res) => res.arrayBuffer());
+
+    const response = await fetch(specificUserUrl, { method: "DELETE" });
+
+    assertEquals(response.status, 200);
+    const data = await response.json();
+    assertEquals(data.success, true);
+    assertEquals(data.message, "User deleted successfully");
+
+    // Verify it's gone
+    const getResponse = await fetch(specificUserUrl);
+    assertEquals(getResponse.status, 404);
+    await getResponse.arrayBuffer();
+  });
 });

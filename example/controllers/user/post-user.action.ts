@@ -5,7 +5,7 @@ import {
 } from "@serverx/utils";
 import { type ActionContext } from "@serverx/server";
 import { User, userOpenApiSchema } from "../../user/user.ts";
-import { postUserHandler } from "../../user/post-user.handler.ts";
+import { addUserHandler } from "../../user/add-user.handler.ts";
 
 export const tags = ["user"];
 export const path = "/";
@@ -20,7 +20,7 @@ export const requestBody = openApiRequestBody({
 
 export async function handler({ body }: ActionContext<User>) {
   const request = await body();
-  return postUserHandler(request);
+  return addUserHandler(request);
 }
 
 export const responses = openApiResponse({

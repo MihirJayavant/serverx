@@ -86,6 +86,13 @@ class UserRepository {
     this.users.push(user);
   }
 
+  updateUser(user: User): void {
+    const index = this.users.findIndex((u) => u.id === user.id);
+    if (index !== -1) {
+      this.users[index] = user;
+    }
+  }
+
   deleteUser(id: number): boolean {
     const initialLength = this.users.length;
     this.users = this.users.filter((user) => user.id !== id);

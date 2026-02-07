@@ -28,7 +28,7 @@ In `example/user/`:
 
 - `user.ts`: Models, Zod schemas, and OpenAPI definitions.
 - `user.repository.ts`: Data access logic (Mock data/DB).
-- `*-profile.handler.ts`: Business logic/use cases.
+- `*-user.handler.ts`: Business logic/use cases.
 - `controllers/`: (In `example/controllers`) Wiring of handlers to the Router as
   "Actions".
 

@@ -22,7 +22,7 @@ function handler(input: Input) {
   return successResult<Output>(data);
 }
 
-export const getProfileHandler = baseHandler({
+export const getUserHandler = baseHandler({
   handler,
   validationSchema: schema,
 });

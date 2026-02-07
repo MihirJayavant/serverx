@@ -1,5 +1,5 @@
 import { cors, scalarUI, Server, swaggerUI } from "@serverx/server";
-import { profileRouter } from "./controllers/profile.ts";
+import { userRouter } from "./controllers/user.ts";
 import * as healthcheck from "./healthcheck.ts";
 
 const app = new Server();
@@ -8,12 +8,12 @@ app.addMiddleware(cors());
 
 app.addHealthCheck(healthcheck);
 
-app.addRouter(profileRouter);
+app.addRouter(userRouter);
 
 app.addOpenApi({
   url: "/api-docs",
   openapi: "3.0.0",
-  info: { title: "Profile API", version: "1.0.0" },
+  info: { title: "user API", version: "1.0.0" },
 });
 
 app.addOpenApiUi("/swagger-docs", swaggerUI({ url: "/api-docs" }));

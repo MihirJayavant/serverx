@@ -26,7 +26,7 @@ function handler(input: Input) {
   return successResult<Output>({ data });
 }
 
-export const getProfilesHandler = baseHandler({
+export const getUsersHandler = baseHandler({
   handler,
   validationSchema: schema,
 });

@@ -1,12 +1,12 @@
 import { httpMethods, openApiParameter, openApiResponse } from "@serverx/utils";
 import { type ActionContext } from "@serverx/server";
-import { getProfileHandler } from "../user/get-profile.handler.ts";
-import { userOpenApiSchema } from "../user/user.ts";
+import { getUserHandler } from "../../user/get-user.handler.ts";
+import { userOpenApiSchema } from "../../user/user.ts";
 
 export const tags = ["user"];
 export const path = "/:userId";
 export const method = httpMethods.GET;
-export const description = "Returns User Profile";
+export const description = "Returns User";
 
 export const parameters = openApiParameter(
   {
@@ -23,11 +23,11 @@ export const parameters = openApiParameter(
 export function handler(
   { params }: ActionContext<unknown, unknown, { userId: string }>,
 ) {
-  return getProfileHandler({ id: Number(params.userId) });
+  return getUserHandler({ id: Number(params.userId) });
 }
 
 export const responses = openApiResponse({
   status: 200,
-  description: "Get User Profile",
+  description: "Get User user",
   schema: userOpenApiSchema,
 });

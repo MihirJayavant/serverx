@@ -18,7 +18,7 @@ function handler(input: Input) {
   return successResult<Output>(input);
 }
 
-export const postProfileHandler = baseHandler({
+export const postUserHandler = baseHandler({
   handler,
   validationSchema: schema,
 });

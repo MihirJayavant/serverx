@@ -50,7 +50,7 @@ export const parameters = openApiParameter(
 
 export const responses = openApiResponse({
   status: 200,
-  description: "User Profile",
+  description: "User user",
   schema: {
     type: "object",
     properties: {

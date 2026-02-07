@@ -1,11 +1,11 @@
 import { httpMethods, openApiParameter, openApiResponse } from "@serverx/utils";
 import { type ActionContext } from "@serverx/server";
-import { getProfileHandler } from "./get-profile.handler.ts";
+import { deleteUserHandler } from "../../user/delete-user.handler.ts";
 
 export const tags = ["user"];
 export const path = "/:userId";
-export const method = httpMethods.GET;
-export const description = "Returns User Profile";
+export const method = httpMethods.DELETE;
+export const description = "Delete User";
 
 export const parameters = openApiParameter(
   {
@@ -22,19 +22,18 @@ export const parameters = openApiParameter(
 export function handler(
   { params }: ActionContext<unknown, unknown, { userId: string }>,
 ) {
-  return getProfileHandler({ id: Number(params.userId) });
+  return deleteUserHandler({ id: Number(params.userId) });
 }
 
 export const responses = openApiResponse({
   status: 200,
-  description: "User Profile",
+  description: "User deleted",
   schema: {
     type: "object",
     properties: {
-      name: {
-        type: "string",
-      },
+      success: { type: "boolean" },
+      message: { type: "string" },
     },
-    required: ["name"],
+    required: ["success", "message"],
   },
 });

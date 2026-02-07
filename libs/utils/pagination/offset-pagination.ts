@@ -13,11 +13,30 @@ import type { FilteringParams, SortingParams } from "./filters.ts";
  * @property {SortingParams} [sort] - Applied sorting
  */
 export type OffsetPaginationParams = {
-  page: number;
-  pageSize: number;
+  page?: number;
+  pageSize?: number;
   filters?: FilteringParams;
   sort?: SortingParams;
 };
+
+/**
+ * OpenAPI Parameters for Offset-Based Pagination
+ * @property {number} page - Current page number
+ * @property {number} pageSize - Number of items per page
+ * @property {FilteringParams} [filters] - Applied filters
+ * @property {SortingParams} [sort] - Applied sorting
+ */
+export const offsetPaginationParamSchema = [
+  { name: "page", in: "query", required: false, schema: { type: "integer" } },
+  {
+    name: "pageSize",
+    in: "query",
+    required: false,
+    schema: { type: "integer" },
+  },
+  { name: "filters", in: "query", required: false, schema: { type: "object" } },
+  { name: "sort", in: "query", required: false, schema: { type: "object" } },
+];
 
 /**
  * Output type for Offset-Based Pagination

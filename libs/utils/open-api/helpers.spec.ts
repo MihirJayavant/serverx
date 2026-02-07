@@ -55,7 +55,7 @@ const openApiResponseTest = describe(openApiResponse.name);
 it(openApiResponseTest, "should return responses", () => {
   const data = {
     status: 200,
-    description: "User Profile",
+    description: "User",
     schema: {
       type: "object",
       properties: {
@@ -83,7 +83,7 @@ it(openApiResponseTest, "should return multiple responses", () => {
   const data: ResponseType[] = [
     {
       status: 200,
-      description: "User Profile",
+      description: "User Found",
       schema: {
         type: "object",
         properties: {
@@ -134,7 +134,7 @@ const openApiRequestBodyTest = describe(openApiRequestBody.name);
 
 it(openApiRequestBodyTest, "should return request body", () => {
   const data = {
-    description: "User Profile",
+    description: "User object that needs to be added",
     required: true,
     schema: {
       type: "object",

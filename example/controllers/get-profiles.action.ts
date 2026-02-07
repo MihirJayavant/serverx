@@ -20,8 +20,8 @@ export function handler(
   { query }: ActionQueryContext<OpenApiQueryTransform<OffsetPaginationParams>>,
 ) {
   return getProfilesHandler({
-    page: Number(query.page) || 1,
-    pageSize: Number(query.pageSize) || 10,
+    page: query.page ? Number(query.page) : undefined,
+    pageSize: query.pageSize ? Number(query.pageSize) : undefined,
     filters: query.filters,
     sort: query.sort,
   });

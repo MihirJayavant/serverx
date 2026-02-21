@@ -16,3 +16,4 @@ export * from "./open-api/scalar.ts";
 export * from "./open-api/utility.types.ts";
 export * from "./http/client.ts";
 export * from "./http/retry.ts";
+export * from "./http/circuit-breaker.ts";

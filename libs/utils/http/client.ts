@@ -6,6 +6,7 @@
 import { httpMethods } from "../result/methods.ts";
 import { withRetry } from "./retry.ts";
 import type { RetryOptions } from "./retry.ts";
+import type { CircuitBreaker } from "./circuit-breaker.ts";
 
 /**
  * Options for the HttpClient
@@ -17,6 +18,8 @@ export interface HttpClientOptions {
   headers?: Record<string, string>;
   /** Retry configuration */
   retryOptions?: RetryOptions;
+  /** Circuit breaker configuration */
+  circuitBreaker?: CircuitBreaker;
 }
 
 /**
@@ -28,6 +31,7 @@ export class HttpClient {
   private baseUrl: string;
   private defaultHeaders: Record<string, string>;
   private retryOptions?: RetryOptions;
+  private circuitBreaker?: CircuitBreaker;
 
   /**
    * @param options - Configuration options for the client
@@ -35,6 +39,7 @@ export class HttpClient {
   constructor(options: HttpClientOptions) {
     this.baseUrl = options.baseUrl;
     this.retryOptions = options.retryOptions;
+    this.circuitBreaker = options.circuitBreaker;
     this.defaultHeaders = {
       "Content-Type": "application/json",
       "Accept": "application/json",
@@ -79,9 +84,15 @@ export class HttpClient {
       return response;
     };
 
-    const response = this.retryOptions
-      ? await withRetry(() => executeRequest(), this.retryOptions)
-      : await executeRequest();
+    const responsePromise = () => {
+      return this.retryOptions
+        ? withRetry(() => executeRequest(), this.retryOptions)
+        : executeRequest();
+    };
+
+    const response = this.circuitBreaker
+      ? await this.circuitBreaker.execute(responsePromise)
+      : await responsePromise();
 
     const status = response.status;
 

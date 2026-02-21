@@ -4,6 +4,8 @@
  */
 
 import { httpMethods } from "../result/methods.ts";
+import { withRetry } from "./retry.ts";
+import type { RetryOptions } from "./retry.ts";
 
 /**
  * Options for the HttpClient
@@ -13,23 +15,26 @@ export interface HttpClientOptions {
   baseUrl: string;
   /** Default headers to be included in all requests */
   headers?: Record<string, string>;
+  /** Retry configuration */
+  retryOptions?: RetryOptions;
 }
 
 /**
  * HttpClient class that wraps fetch functionality for modern REST APIs with JSON content.
  *
- * This class provides a standardized way to interact with JSON-based REST APIs,
- * returning a Result type for consistent error handling.
+ * This class provides a standardized way to interact with JSON-based REST APIs.
  */
 export class HttpClient {
   private baseUrl: string;
   private defaultHeaders: Record<string, string>;
+  private retryOptions?: RetryOptions;
 
   /**
    * @param options - Configuration options for the client
    */
   constructor(options: HttpClientOptions) {
     this.baseUrl = options.baseUrl;
+    this.retryOptions = options.retryOptions;
     this.defaultHeaders = {
       "Content-Type": "application/json",
       "Accept": "application/json",
@@ -43,7 +48,7 @@ export class HttpClient {
    * @param urlPath - Path or full URL
    * @param body - Request body
    * @param options - Additional fetch options
-   * @returns Result wrapped response
+   * @returns Parsed JSON response
    */
   private async request<T>(
     method: string,
@@ -52,18 +57,31 @@ export class HttpClient {
     options: RequestInit = {},
   ): Promise<T> {
     // Construct full URL
-    const url = new URL(urlPath, this.baseUrl ?? undefined).toString();
+    const url = new URL(urlPath, this.baseUrl).toString();
 
     const headers = { ...this.defaultHeaders, ...options.headers };
 
-    const response = await fetch(url, {
-      ...options,
-      method,
-      headers,
-      body: (body && (method !== "GET" && method !== "DELETE"))
-        ? JSON.stringify(body)
-        : undefined,
-    });
+    const executeRequest = async () => {
+      const response = await fetch(url, {
+        ...options,
+        method,
+        headers,
+        body: (body && (method !== "GET" && method !== "DELETE"))
+          ? JSON.stringify(body)
+          : undefined,
+      });
+
+      // Retry on server errors (5xx) or if explicitly requested via retryOptions.shouldRetry
+      if (!response.ok && response.status >= 500) {
+        throw new Error(`Server Error: ${response.status}`);
+      }
+
+      return response;
+    };
+
+    const response = this.retryOptions
+      ? await withRetry(() => executeRequest(), this.retryOptions)
+      : await executeRequest();
 
     const status = response.status;
 
@@ -121,11 +139,11 @@ export class HttpClient {
    * @param body - Request body
    * @param options - Request options
    */
-  patch<T>(
+  patch<T, U>(
     path: string,
-    body?: unknown,
+    body?: T,
     options?: RequestInit,
-  ): Promise<T> {
+  ): Promise<U> {
     return this.request(httpMethods.PATCH, path, body, options);
   }
 

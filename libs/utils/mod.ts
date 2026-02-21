@@ -15,3 +15,4 @@ export * from "./open-api/swagger.ts";
 export * from "./open-api/scalar.ts";
 export * from "./open-api/utility.types.ts";
 export * from "./http/client.ts";
+export * from "./http/retry.ts";

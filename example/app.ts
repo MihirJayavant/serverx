@@ -1,6 +1,7 @@
 import { cors, scalarUI, Server, swaggerUI, useLogger } from "@serverx/server";
 import { userRouter } from "./controllers/user.ts";
 import * as healthcheck from "./healthcheck.ts";
+import { logger } from "./core/logger.ts";
 
 const app = new Server();
 
@@ -23,5 +24,5 @@ app.addOpenApiUi("/scalar-docs", scalarUI({ spec: { url: "/api-docs" } }));
 
 app.serve({ port: 3100, hostname: "127.0.0.1" });
 
-console.log("Swagger Docs: http://127.0.0.1:3100/swagger-docs");
-console.log("Scalar Docs: http://127.0.0.1:3100/scalar-docs");
+logger.info("Swagger Docs: http://127.0.0.1:3100/swagger-docs");
+logger.info("Scalar Docs: http://127.0.0.1:3100/scalar-docs");

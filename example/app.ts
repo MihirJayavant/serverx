@@ -1,8 +1,10 @@
-import { cors, scalarUI, Server, swaggerUI } from "@serverx/server";
+import { cors, scalarUI, Server, swaggerUI, useLogger } from "@serverx/server";
 import { userRouter } from "./controllers/user.ts";
 import * as healthcheck from "./healthcheck.ts";
 
 const app = new Server();
+
+app.addMiddleware(useLogger({ level: "info" }));
 
 app.addMiddleware(cors());
 

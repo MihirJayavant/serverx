@@ -9,6 +9,8 @@
   "imports": {
     "@std/assert": "jsr:@std/assert@^1.0.19",
     "@std/testing": "jsr:@std/testing@^1.0.17",
-    "@zod/zod": "npm:zod@^4.3.6"
+    "@zod/zod": "npm:zod@^4.3.6",
+    "@pino/pino": "npm:pino@^9.2.0",
+    "pino-pretty": "npm:pino-pretty@^10.3.0"
   }
 }

@@ -1,5 +1,10 @@
 import pino from "@pino/pino";
-import type { Logger, LoggerConfig, LogLevel } from "@serverx/utils";
+import type {
+  Logger,
+  LoggerConfig,
+  LoggerPayload,
+  LogLevel,
+} from "@serverx/utils";
 
 /**
  * Pino-based logger implementation
@@ -15,29 +20,35 @@ export class PinoLogger implements Logger {
     });
   }
 
-  debug(message: string, data?: Record<string, unknown>): void {
-    this.#pinoInstance.debug(data ?? {}, message);
+  debug(message: string, payload?: LoggerPayload): void {
+    this.#pinoInstance.debug(
+      payload?.fields ?? {},
+      message,
+      ...(payload?.args ?? []),
+    );
   }
 
-  info(message: string, data?: Record<string, unknown>): void {
-    this.#pinoInstance.info(data ?? {}, message);
+  info(message: string, payload?: LoggerPayload): void {
+    this.#pinoInstance.info(
+      payload?.fields ?? {},
+      message,
+      ...(payload?.args ?? []),
+    );
   }
 
-  warn(message: string, data?: Record<string, unknown>): void {
-    this.#pinoInstance.warn(data ?? {}, message);
+  warn(message: string, payload?: LoggerPayload): void {
+    this.#pinoInstance.warn(
+      payload?.fields ?? {},
+      message,
+      ...(payload?.args ?? []),
+    );
   }
 
-  error(message: string, error?: Error | Record<string, unknown>): void {
-    if (error instanceof Error) {
-      this.#pinoInstance.error(
-        {
-          err: error,
-          stack: error.stack,
-        },
-        message,
-      );
-    } else {
-      this.#pinoInstance.error(error ?? {}, message);
-    }
+  error(message: string, payload?: LoggerPayload): void {
+    this.#pinoInstance.error(
+      payload?.fields ?? {},
+      message,
+      ...(payload?.args ?? []),
+    );
   }
 }

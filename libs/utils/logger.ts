@@ -8,6 +8,11 @@
  */
 export type LogLevel = "debug" | "info" | "warn" | "error";
 
+export type LoggerPayload = {
+  args?: unknown[];
+  fields?: Record<string, unknown>;
+};
+
 /**
  * Logger type for structured logging
  */
@@ -15,22 +20,22 @@ export type Logger = {
   /**
    * Log a debug message
    */
-  debug(message: string, data?: Record<string, unknown>): void;
+  debug(message: string, payload?: LoggerPayload): void;
 
   /**
    * Log an info message
    */
-  info(message: string, data?: Record<string, unknown>): void;
+  info(message: string, payload?: LoggerPayload): void;
 
   /**
    * Log a warning message
    */
-  warn(message: string, data?: Record<string, unknown>): void;
+  warn(message: string, payload: LoggerPayload): void;
 
   /**
    * Log an error message
    */
-  error(message: string, error?: Error | Record<string, unknown>): void;
+  error(message: string, payload?: LoggerPayload): void;
 };
 
 /**

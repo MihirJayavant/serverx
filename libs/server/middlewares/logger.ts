@@ -1,12 +1,20 @@
 import type { MiddlewareHandler } from "@hono/hono";
-import { logger as honoLogger } from "@hono/hono/logger";
 import type { LoggerConfig } from "@serverx/utils";
 import { PinoLogger } from "../logger/pino-logger.ts";
 
 export function useLogger(config?: LoggerConfig): MiddlewareHandler {
   const pinoLogger = new PinoLogger(config);
-  const customLogger = (message: string, ...rest: string[]) => {
-    pinoLogger.info(message, { rest });
+  return async (c, next) => {
+    pinoLogger.debug(`Incoming request: %s %s`, {
+      args: [c.req.method, c.req.url],
+      fields: {
+        method: c.req.method,
+        url: c.req.url,
+        header: c.req.header,
+        param: c.req.param,
+        query: c.req.query(),
+      },
+    });
+    await next();
   };
-  return honoLogger(customLogger);
 }

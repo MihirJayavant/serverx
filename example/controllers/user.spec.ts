@@ -41,6 +41,19 @@ describe("User Controller", () => {
     assertGreater(result.data.length, 0);
   });
 
+  it("should return users users for GET /user with pagination", async () => {
+    const getusersUrl = new URL(`${baseUrl}/user`);
+    getusersUrl.searchParams.append("page", "1");
+    getusersUrl.searchParams.append("pageSize", "5");
+
+    const response = await fetch(getusersUrl);
+
+    assertEquals(response.status, 200);
+    const result = await response.json();
+    assertEquals(Array.isArray(result.data), true);
+    assertGreater(result.data.length, 0);
+  });
+
   it("should return 400 for invalid page number", async () => {
     const getusersUrl = `${baseUrl}/user?page=0`;
 

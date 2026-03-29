@@ -5,7 +5,7 @@ import { logger } from "./core/logger.ts";
 
 const app = new Server();
 
-app.addMiddleware(useLogger({ level: "info" }));
+app.addMiddleware(useLogger({ level: "debug" }));
 
 app.addMiddleware(cors());
 

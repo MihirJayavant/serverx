@@ -120,7 +120,6 @@ export class Router {
           return c.json({ error: result.error }, result.status);
         }
       } catch (error) {
-        console.error(error);
         return c.json({ error }, 500);
       }
     };

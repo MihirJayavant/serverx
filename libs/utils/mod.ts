@@ -4,6 +4,7 @@
  */
 
 export * from "./utility.types.ts";
+export * from "./logger.ts";
 export * from "./result/result.ts";
 export * from "./result/methods.ts";
 export * from "./pagination/filters.ts";

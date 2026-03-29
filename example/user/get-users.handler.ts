@@ -18,7 +18,6 @@ const schema = z.object({
 });
 
 function handler(input: Input) {
-  console.log(input);
   const data = userRepository.getAllUsers({
     limit: input.pageSize ?? 10,
     offset: ((input.page ?? 1) - 1) * (input.pageSize ?? 10),

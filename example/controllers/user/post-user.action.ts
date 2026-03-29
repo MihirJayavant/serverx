@@ -6,6 +6,7 @@ import {
 import { type ActionContext } from "@serverx/server";
 import { User, userOpenApiSchema } from "../../user/user.ts";
 import { addUserHandler } from "../../user/add-user.handler.ts";
+import { logger } from "../../core/logger.ts";
 
 export const tags = ["user"];
 export const path = "/";
@@ -20,6 +21,7 @@ export const requestBody = openApiRequestBody({
 
 export async function handler({ body }: ActionContext<User>) {
   const request = await body();
+  logger.info("Received request to add user %o", { args: [request] });
   return addUserHandler(request);
 }
 

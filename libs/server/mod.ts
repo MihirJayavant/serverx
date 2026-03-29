@@ -5,4 +5,6 @@ export * from "./router/router.ts";
 export * from "./router/request-handler.ts";
 export * from "./middlewares/swagger.ts";
 export * from "./middlewares/scalar.ts";
+export * from "./middlewares/logger.ts";
 export * from "./handlers/healthcheck.ts";
+export * from "./logger/pino-logger.ts";

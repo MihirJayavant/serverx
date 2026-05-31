@@ -68,14 +68,14 @@ if (isError(result)) {
 ```ts
 import { statusCodes } from "@serverx/utils";
 
-statusCodes.Ok;                  // 200
-statusCodes.Created;             // 201
-statusCodes.NoContent;           // 204
-statusCodes.BadRequest;          // 400
-statusCodes.Unauthorized;        // 401
-statusCodes.Forbidden;           // 403
-statusCodes.NotFound;            // 404
-statusCodes.Conflict;            // 409
+statusCodes.Ok; // 200
+statusCodes.Created; // 201
+statusCodes.NoContent; // 204
+statusCodes.BadRequest; // 400
+statusCodes.Unauthorized; // 401
+statusCodes.Forbidden; // 403
+statusCodes.NotFound; // 404
+statusCodes.Conflict; // 409
 statusCodes.InternalServerError; // 500
 ```
 
@@ -84,10 +84,10 @@ statusCodes.InternalServerError; // 500
 ```ts
 import { httpMethods } from "@serverx/utils";
 
-httpMethods.GET;    // "GET"
-httpMethods.POST;   // "POST"
-httpMethods.PUT;    // "PUT"
-httpMethods.PATCH;  // "PATCH"
+httpMethods.GET; // "GET"
+httpMethods.POST; // "POST"
+httpMethods.PUT; // "PUT"
+httpMethods.PATCH; // "PATCH"
 httpMethods.DELETE; // "DELETE"
 ```
 
@@ -113,7 +113,9 @@ const client = new HttpClient({
 });
 
 const user = await client.get<User>("/users/1");
-const created = await client.post<User, CreateUserDto>("/users", { name: "Alice" });
+const created = await client.post<User, CreateUserDto>("/users", {
+  name: "Alice",
+});
 await client.delete("/users/1");
 ```
 
@@ -183,16 +185,23 @@ async function listUsers(params: OffsetPaginationParams) {
 
 ```ts
 import {
-  type CursorPaginationParams,
   type CursorPaginatedResult,
+  type CursorPaginationParams,
 } from "@serverx/utils";
 
-async function listPosts(params: CursorPaginationParams): Promise<CursorPaginatedResult<Post>> {
+async function listPosts(
+  params: CursorPaginationParams,
+): Promise<CursorPaginatedResult<Post>> {
   const { after, limit } = params;
   const data = await db.posts.findMany({ cursor: after, take: limit + 1 });
   const hasNextPage = data.length > limit;
 
-  return { data: data.slice(0, limit), limit, hasNextPage, hasPreviousPage: !!after };
+  return {
+    data: data.slice(0, limit),
+    limit,
+    hasNextPage,
+    hasPreviousPage: !!after,
+  };
 }
 ```
 
@@ -295,7 +304,13 @@ function setup(logger: Logger) {
 ## Utility Types
 
 ```ts
-import type { JsonType, OptionalExcept, Prettify, StrictOmit, Task } from "@serverx/utils";
+import type {
+  JsonType,
+  OptionalExcept,
+  Prettify,
+  StrictOmit,
+  Task,
+} from "@serverx/utils";
 
 // Make complex intersected types readable in IDE hover
 type Clean = Prettify<A & B>;

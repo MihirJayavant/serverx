@@ -9,10 +9,14 @@ HTTP server, router, middleware, and MCP support built on
 
 - **Server** — Hono-based HTTP server with fluent setup API
 - **Router & Actions** — file-per-route pattern with automatic OpenAPI wiring
-- **Middleware** — CORS, structured request logging (Pino), Swagger UI, Scalar UI
+- **Middleware** — CORS, structured request logging (Pino), Swagger UI, Scalar
+  UI
 - **Request handler** — Zod-validated handler wrapper (`baseHandler`)
-- **Health check** — built-in `/healthcheck` endpoint with dependency and system metrics
-- **MCP** — first-class [Model Context Protocol](https://modelcontextprotocol.io) support via Streamable HTTP
+- **Health check** — built-in `/healthcheck` endpoint with dependency and system
+  metrics
+- **MCP** — first-class
+  [Model Context Protocol](https://modelcontextprotocol.io) support via
+  Streamable HTTP
 - **Virtual Entity** — lifecycle abstraction for domain entities
 
 ## Installation
@@ -24,7 +28,14 @@ deno add jsr:@serverx/server
 ## Quick Start
 
 ```ts
-import { cors, Router, scalarUI, Server, swaggerUI, useLogger } from "@serverx/server";
+import {
+  cors,
+  Router,
+  scalarUI,
+  Server,
+  swaggerUI,
+  useLogger,
+} from "@serverx/server";
 import { openApiParameter, openApiResponse, statusCodes } from "@serverx/utils";
 
 const router = new Router({ basePath: "/users" });
@@ -34,8 +45,17 @@ router.addAction({
   method: httpMethods.GET,
   tags: ["users"],
   description: "Get a user by ID",
-  parameters: openApiParameter({ name: "id", in: "path", required: true, schema: { type: "string" } }),
-  responses: openApiResponse({ status: 200, description: "User", schema: { type: "object" } }),
+  parameters: openApiParameter({
+    name: "id",
+    in: "path",
+    required: true,
+    schema: { type: "string" },
+  }),
+  responses: openApiResponse({
+    status: 200,
+    description: "User",
+    schema: { type: "object" },
+  }),
   handler: ({ params }) => successResult({ id: params.id, name: "Alice" }),
 });
 
@@ -43,9 +63,16 @@ const app = new Server();
 app.addMiddleware(useLogger({ level: "info" }));
 app.addMiddleware(cors());
 app.addRouter(router);
-app.addOpenApi({ url: "/api-docs", openapi: "3.1.0", info: { version: "1.0.0", title: "My API" } });
+app.addOpenApi({
+  url: "/api-docs",
+  openapi: "3.1.0",
+  info: { version: "1.0.0", title: "My API" },
+});
 app.addOpenApiUi("/swagger-docs", swaggerUI({ url: "/api-docs" }));
-app.addOpenApiUi("/scalar-docs", scalarUI({ spec: { url: "/api-docs" }, theme: "deepSpace" }));
+app.addOpenApiUi(
+  "/scalar-docs",
+  scalarUI({ spec: { url: "/api-docs" }, theme: "deepSpace" }),
+);
 app.serve({ port: 3100, hostname: "127.0.0.1" });
 ```
 
@@ -58,13 +85,13 @@ import { Server } from "@serverx/server";
 
 const app = new Server();
 
-app.addMiddleware(fn);                         // Register middleware
-app.addRouter(router);                         // Mount an HTTP router
-app.addHealthCheck(action);                    // Register a health check action
-app.addOpenApi(config);                        // Serve OpenAPI JSON spec
+app.addMiddleware(fn); // Register middleware
+app.addRouter(router); // Mount an HTTP router
+app.addHealthCheck(action); // Register a health check action
+app.addOpenApi(config); // Serve OpenAPI JSON spec
 app.addOpenApiUi("/swagger-docs", swaggerUI()); // Mount Swagger UI
-app.addOpenApiUi("/scalar-docs", scalarUI());  // Mount Scalar UI
-app.addMcpRouter(mcpRouter);                   // Register MCP tool router
+app.addOpenApiUi("/scalar-docs", scalarUI()); // Mount Scalar UI
+app.addMcpRouter(mcpRouter); // Register MCP tool router
 app.addMcp({ path: "/mcp", name: "my-api", version: "1.0.0" }); // Mount MCP endpoint
 app.serve({ port: 3100, hostname: "127.0.0.1" });
 ```
@@ -72,7 +99,8 @@ app.serve({ port: 3100, hostname: "127.0.0.1" });
 ## Router & Actions
 
 A `Router` groups related actions. Each action is an object (typically a file's
-named exports) with a `path`, `method`, `handler`, and optional OpenAPI metadata.
+named exports) with a `path`, `method`, `handler`, and optional OpenAPI
+metadata.
 
 ```ts
 import { Router } from "@serverx/server";
@@ -95,7 +123,11 @@ router.addAction({
   responses: openApiResponse({
     status: 200,
     description: "User object",
-    schema: { type: "object", properties: { id: { type: "string" } }, required: ["id"] },
+    schema: {
+      type: "object",
+      properties: { id: { type: "string" } },
+      required: ["id"],
+    },
   }),
   handler: ({ params }) => successResult({ id: params.id }),
 });
@@ -107,10 +139,10 @@ Every handler receives an `ActionContext`:
 
 ```ts
 {
-  body: () => Promise<TBody>;  // Parse request body
-  query: TQuery;               // Parsed query string
-  params: TParam;              // Path parameters
-  context: Context;            // Raw Hono context
+  body: (() => Promise<TBody>); // Parse request body
+  query: TQuery; // Parsed query string
+  params: TParam; // Path parameters
+  context: Context; // Raw Hono context
 }
 ```
 
@@ -123,7 +155,8 @@ v1.addSubRouter(router);
 
 ## baseHandler
 
-Wrap your business logic in `baseHandler` to apply Zod validation before the handler runs.
+Wrap your business logic in `baseHandler` to apply Zod validation before the
+handler runs.
 
 ```ts
 import { baseHandler } from "@serverx/server";
@@ -182,10 +215,13 @@ app.addOpenApiUi("/swagger-docs", swaggerUI({ url: "/api-docs" }));
 ```ts
 import { scalarUI } from "@serverx/server";
 
-app.addOpenApiUi("/scalar-docs", scalarUI({
-  spec: { url: "/api-docs" },
-  theme: "deepSpace",
-}));
+app.addOpenApiUi(
+  "/scalar-docs",
+  scalarUI({
+    spec: { url: "/api-docs" },
+    theme: "deepSpace",
+  }),
+);
 ```
 
 Available themes: `alternate`, `default`, `moon`, `purple`, `solarized`,
@@ -193,7 +229,8 @@ Available themes: `alternate`, `default`, `moon`, `purple`, `solarized`,
 
 ## Health Check
 
-`healthCheckHandler` reports dependency status and system metrics on `GET /healthcheck`.
+`healthCheckHandler` reports dependency status and system metrics on
+`GET /healthcheck`.
 
 ```ts
 import { healthCheckHandler, healthCheckResponse } from "@serverx/server";
@@ -208,7 +245,10 @@ const healthcheck = {
   handler: () =>
     healthCheckHandler({
       dependencies: [
-        { name: "database", check: () => db.ping().then(() => true).catch(() => false) },
+        {
+          name: "database",
+          check: () => db.ping().then(() => true).catch(() => false),
+        },
       ],
     }),
 };
@@ -231,7 +271,8 @@ Returns `200` when all dependencies pass, `500` if any fail.
 
 ## MCP — Model Context Protocol
 
-Expose your business logic as MCP tools alongside the HTTP API. Both surfaces share the same handlers.
+Expose your business logic as MCP tools alongside the HTTP API. Both surfaces
+share the same handlers.
 
 ### Define tools
 
@@ -257,22 +298,24 @@ app.addMcpRouter(mcpRouter);
 app.addMcp({ path: "/mcp", name: "my-api", version: "1.0.0" });
 ```
 
-The MCP server is mounted at `/mcp` using Streamable HTTP (stateless, JSON response mode), compatible with any MCP client.
+The MCP server is mounted at `/mcp` using Streamable HTTP (stateless, JSON
+response mode), compatible with any MCP client.
 
 ### Tool annotations
 
-| Field | Type | Description |
-|---|---|---|
-| `readOnlyHint` | `boolean` | Tool does not modify state |
-| `destructiveHint` | `boolean` | Tool may delete or overwrite data |
-| `idempotentHint` | `boolean` | Repeated calls have no additional effect |
-| `openWorldHint` | `boolean` | Tool interacts with external services |
-| `title` | `string` | Human-readable tool title |
+| Field             | Type      | Description                              |
+| ----------------- | --------- | ---------------------------------------- |
+| `readOnlyHint`    | `boolean` | Tool does not modify state               |
+| `destructiveHint` | `boolean` | Tool may delete or overwrite data        |
+| `idempotentHint`  | `boolean` | Repeated calls have no additional effect |
+| `openWorldHint`   | `boolean` | Tool interacts with external services    |
+| `title`           | `string`  | Human-readable tool title                |
 
 ## Logger
 
 `PinoLogger` is the concrete `Logger` implementation used by `useLogger`.
-Instantiate it directly when you need structured logging outside a request context.
+Instantiate it directly when you need structured logging outside a request
+context.
 
 ```ts
 import { PinoLogger } from "@serverx/server";

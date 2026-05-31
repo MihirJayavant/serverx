@@ -5,15 +5,16 @@
 [![License](https://img.shields.io/badge/license-Apache%202.0-blue.svg)](LICENSE)
 
 A Deno framework for building type-safe REST APIs with automatic OpenAPI
-documentation and [Model Context Protocol (MCP)](https://modelcontextprotocol.io)
-support out of the box.
+documentation and
+[Model Context Protocol (MCP)](https://modelcontextprotocol.io) support out of
+the box.
 
 ## Packages
 
-| Package | Description |
-|---|---|
+| Package                            | Description                                              |
+| ---------------------------------- | -------------------------------------------------------- |
 | [`@serverx/server`](./libs/server) | HTTP server, router, middleware, and MCP — built on Hono |
-| [`@serverx/utils`](./libs/utils) | Result types, pagination, OpenAPI builders, HTTP client |
+| [`@serverx/utils`](./libs/utils)   | Result types, pagination, OpenAPI builders, HTTP client  |
 
 ## Quick Start
 
@@ -47,7 +48,11 @@ router.addAction({
   responses: openApiResponse({
     status: 200,
     description: "User object",
-    schema: { type: "object", properties: { id: { type: "string" } }, required: ["id"] },
+    schema: {
+      type: "object",
+      properties: { id: { type: "string" } },
+      required: ["id"],
+    },
   }),
   handler: ({ params }) => successResult({ id: params.id }),
 });
@@ -56,7 +61,11 @@ const app = new Server();
 app.addMiddleware(useLogger());
 app.addMiddleware(cors());
 app.addRouter(router);
-app.addOpenApi({ url: "/api-docs", openapi: "3.1.0", info: { version: "1.0.0", title: "My API" } });
+app.addOpenApi({
+  url: "/api-docs",
+  openapi: "3.1.0",
+  info: { version: "1.0.0", title: "My API" },
+});
 app.addOpenApiUi("/swagger-docs", swaggerUI({ url: "/api-docs" }));
 app.serve({ port: 3100, hostname: "127.0.0.1" });
 ```
@@ -91,10 +100,10 @@ HTTP responses. The router serializes it; you never touch `Response` directly.
 ```ts
 import { errorResult, statusCodes, successResult } from "@serverx/utils";
 
-successResult(user);                                    // 200
-successResult(user, statusCodes.Created);               // 201
-successResult(null, statusCodes.NoContent);             // 204
-errorResult("User not found", statusCodes.NotFound);    // 404
+successResult(user); // 200
+successResult(user, statusCodes.Created); // 201
+successResult(null, statusCodes.NoContent); // 204
+errorResult("User not found", statusCodes.NotFound); // 404
 ```
 
 ### Validated handlers
@@ -117,8 +126,8 @@ const createUser = baseHandler({
 
 ### MCP support
 
-Every HTTP action can have a sibling MCP tool that shares the same handler.
-This keeps HTTP and AI-agent surfaces in sync without duplicating logic.
+Every HTTP action can have a sibling MCP tool that shares the same handler. This
+keeps HTTP and AI-agent surfaces in sync without duplicating logic.
 
 ```ts
 import { McpRouter } from "@serverx/server";
@@ -158,7 +167,8 @@ deno task mcp-inspect
 
 ## Documentation
 
-Full documentation is available in the [ServerX Wiki](https://github.com/MihirJayavant/serverx/wiki).
+Full documentation is available in the
+[ServerX Wiki](https://github.com/MihirJayavant/serverx/wiki).
 
 - [`@serverx/server` README](./libs/server/README.md)
 - [`@serverx/utils` README](./libs/utils/README.md)
@@ -166,8 +176,8 @@ Full documentation is available in the [ServerX Wiki](https://github.com/MihirJa
 ## Contributing
 
 Contributions are welcome. Please open an issue before submitting a pull request
-for significant changes. See the [pull request template](.github/pull_request_template.md)
-for what to include.
+for significant changes. See the
+[pull request template](.github/pull_request_template.md) for what to include.
 
 ## License
 

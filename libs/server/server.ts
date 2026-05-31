@@ -3,10 +3,17 @@ import type { Context, Next } from "@hono/hono";
 import { type Action, Router } from "./router/router.ts";
 import { OpenApi, type OpenApiUiOption } from "@serverx/utils";
 import type { HealthCheckResponse } from "./handlers/healthcheck.ts";
+import type { McpRouter } from "./mcp/mcp-router.ts";
+import { createMcpHandler, type McpServerOptions } from "./mcp/mcp-server.ts";
+
+export type McpMountOptions = McpServerOptions & {
+  path?: string;
+};
 
 export class Server {
   #router = new Hono();
   #apiDocs: OpenApi = new OpenApi();
+  #mcpRouters: McpRouter[] = [];
 
   addRouter(router: Router) {
     this.#router.route("/", router.nativeRouter);
@@ -37,6 +44,19 @@ export class Server {
     const health = new Router();
     health.addAction(action);
     this.addRouter(health);
+  }
+
+  addMcpRouter(router: McpRouter) {
+    this.#mcpRouters.push(router);
+  }
+
+  addMcp(options: McpMountOptions) {
+    const path = options.path ?? "/mcp";
+    const handler = createMcpHandler(this.#mcpRouters, {
+      name: options.name,
+      version: options.version,
+    });
+    this.#router.all(path, handler);
   }
 
   serve(

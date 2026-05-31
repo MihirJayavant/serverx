@@ -11,7 +11,8 @@
     ]
   },
   "imports": {
-    "@hono/hono": "jsr:@hono/hono@^4.11.7"
+    "@hono/hono": "jsr:@hono/hono@^4.11.7",
+    "@modelcontextprotocol/sdk": "npm:@modelcontextprotocol/sdk@^1.29.0"
   },
   "test": {
     "include": [

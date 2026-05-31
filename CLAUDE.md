@@ -101,11 +101,36 @@ app.addMiddleware(useLogger({ level: "debug" }));  // Pino-based
 app.addMiddleware(cors());
 app.addHealthCheck(healthcheck);
 app.addRouter(userRouter);
+app.addMcpRouter(userMcpRouter);
+app.addMcp({ path: "/mcp", name: "serverx-example", version: "1.0.0" });
 app.addOpenApi({ url: "/api-docs", ... });
 app.addOpenApiUi("/swagger-docs", swaggerUI({ url: "/api-docs" }));
 app.addOpenApiUi("/scalar-docs", scalarUI({ spec: { url: "/api-docs" } }));
 app.serve({ port: 3100, hostname: "127.0.0.1" });
 ```
+
+### MCP tool actions
+
+Alongside each HTTP `*.action.ts`, a sibling `*.mcp.ts` exposes the same
+business logic as an MCP tool. Both files import the same `*.handler.ts`, so the
+HTTP and MCP surfaces stay in sync. Required exports per `.mcp.ts`:
+
+```ts
+export const name = "get_user"; // snake_case tool id
+export const description = "Fetch a single user by id";
+export const inputSchema = { // raw shape, NOT z.object()
+  userId: z.number().int().min(1),
+};
+export const annotations = { readOnlyHint: true }; // optional
+export function handler(input: { userId: number }) {
+  return getUserHandler({ id: input.userId });
+}
+```
+
+Aggregate the tools in `example/controllers/<feature>-mcp.ts` with an
+`McpRouter`, then register it via `app.addMcpRouter(...)`. The MCP transport is
+mounted with `app.addMcp({ path: "/mcp", name, version })` and serves Streamable
+HTTP (stateless, JSON response mode).
 
 ### Logger
 
@@ -119,9 +144,12 @@ request lifecycle.
 1. Create `example/<feature>/` with `<feature>.ts` (Zod schema + OpenAPI
    schema), `<feature>.repository.ts`, and `*-<feature>.handler.ts` files.
 2. Create action modules in `example/controllers/<feature>/` (one file per
-   endpoint).
-3. Wire actions into a new `Router` in `example/controllers/<feature>.ts`.
-4. Register the router in `example/app.ts` via `app.addRouter(...)`.
+   endpoint). For each `*.action.ts`, add a sibling `*.mcp.ts` that delegates to
+   the same handler.
+3. Wire actions into a new `Router` in `example/controllers/<feature>.ts`, and
+   tools into an `McpRouter` in `example/controllers/<feature>-mcp.ts`.
+4. Register both in `example/app.ts` via `app.addRouter(...)` and
+   `app.addMcpRouter(...)`.
 
 ### Integration tests
 
@@ -138,3 +166,5 @@ request lifecycle.
 - **Every API endpoint must include OpenAPI metadata** — `tags`, `description`,
   `parameters`, and `responses` exports alongside the required `path`, `method`,
   and `handler`.
+- **HTTP and MCP must share the same handler.** Both `*.action.ts` and
+  `*.mcp.ts` import the same `*.handler.ts` so behaviour cannot diverge.

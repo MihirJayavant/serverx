@@ -1985,6 +1985,7 @@
     "dependencies": [
       "jsr:@std/assert@^1.0.19",
       "jsr:@std/testing@^1.0.17",
+      "npm:@modelcontextprotocol/sdk@^1.29.0",
       "npm:pino-pretty@^10.3.0",
       "npm:pino@^9.2.0",
       "npm:zod@^4.3.6"

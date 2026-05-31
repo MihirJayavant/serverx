@@ -185,7 +185,9 @@ request lifecycle.
 
 ### Integration tests
 
-`example/controllers/user.spec.ts` hits the live server at `127.0.0.1:3100`. Run
+`example/controllers/*.spec.ts` files hit the live server at `127.0.0.1:3100`:
+`user.spec.ts` exercises the HTTP routes, and `user-mcp.spec.ts` exercises the
+MCP tools via the SDK `Client` + `StreamableHTTPClientTransport`. Run
 `deno task user-api` in a separate terminal before executing
 `deno task test:api`.
 

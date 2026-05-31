@@ -4,7 +4,9 @@
   "tasks": {
     "user-api": "deno run --allow-net=127.0.0.1:3100 --allow-env --allow-sys=\"systemMemoryInfo,loadavg,hostname\" --watch ./example/app.ts",
     "util-docs": "deno doc --html --name=\"@server/utils\" ./libs/utils/mod.ts",
-    "test:api": "deno test example/**/*.spec.ts --allow-net=127.0.0.1:3100"
+    "test:api": "deno test example/**/*.spec.ts --allow-net=127.0.0.1:3100",
+    "mcp-inspect": "deno run -A --node-modules-dir=auto npm:@modelcontextprotocol/inspector@^0.21.2",
+    "mcp-inspect:list": "deno run -A --node-modules-dir=auto npm:@modelcontextprotocol/inspector@^0.21.2 --cli http://127.0.0.1:3100/mcp --transport http --method tools/list"
   },
   "imports": {
     "@std/assert": "jsr:@std/assert@^1.0.19",

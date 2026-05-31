@@ -15,6 +15,12 @@ deno task test:api
 # Generate HTML docs for @serverx/utils
 deno task util-docs
 
+# Launch the MCP Inspector UI against the running server (requires user-api up)
+deno task mcp-inspect
+
+# One-shot CLI check: list tools exposed at /mcp
+deno task mcp-inspect:list
+
 # CI checks (run all before pushing)
 deno fmt --check   # formatting
 deno lint          # linting
@@ -24,6 +30,32 @@ deno test          # unit tests (all *.spec.ts files)
 # Run a single test file
 deno test libs/utils/result/result.spec.ts
 ```
+
+### Local MCP debugging with the Inspector
+
+The Inspector is the upstream `@modelcontextprotocol/inspector` package launched
+as a side-by-side dev tool — it spins up its own UI (port 6274) and proxy
+(port 6277) and connects to our `/mcp` endpoint as a client. Two-terminal
+workflow:
+
+```bash
+# Terminal 1 — start the server
+deno task user-api
+
+# Terminal 2 — start the Inspector
+deno task mcp-inspect
+#   1. The launcher prints a URL with a session token (?MCP_PROXY_AUTH_TOKEN=…).
+#      Open it in a browser.
+#   2. Transport: "Streamable HTTP"
+#   3. Server URL: http://127.0.0.1:3100/mcp
+#   4. Connect → tools/list, tools/call, view raw JSON-RPC traffic.
+```
+
+For scripts and CI, `deno task mcp-inspect:list` exercises the full transport
+non-interactively and prints `tools/list` JSON to stdout.
+
+Fallback if Deno's npm compat ever breaks for the Inspector: run
+`npx @modelcontextprotocol/inspector` directly with the same arguments.
 
 ## Architecture
 

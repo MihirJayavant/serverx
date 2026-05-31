@@ -8,3 +8,4 @@ export * from "./middlewares/scalar.ts";
 export * from "./middlewares/logger.ts";
 export * from "./handlers/healthcheck.ts";
 export * from "./logger/pino-logger.ts";
+export * from "./mcp/mod.ts";

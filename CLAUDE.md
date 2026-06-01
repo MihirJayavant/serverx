@@ -1,7 +1,19 @@
 # CLAUDE.md
 
-This file provides guidance to Claude Code (claude.ai/code) when working with
-code in this repository.
+## File map
+
+| Path                              | Contents                                                              |
+| --------------------------------- | --------------------------------------------------------------------- |
+| `example/app.ts`                  | Server bootstrap (routers, middlewares, MCP, OpenAPI)                 |
+| `example/user/`                   | Domain: `user.ts` (schema), `user.repository.ts`, `*-user.handler.ts` |
+| `example/controllers/user/`       | One `*.action.ts` + `*.mcp.ts` per endpoint                           |
+| `example/controllers/user.ts`     | HTTP `Router` aggregating all user actions                            |
+| `example/controllers/user-mcp.ts` | `McpRouter` aggregating all user MCP tools                            |
+| `libs/server/router/router.ts`    | `Router`, `addAction`, `actionHandler`                                |
+| `libs/server/mcp/mcp-router.ts`   | `McpRouter`                                                           |
+| `libs/server/server.ts`           | `Server` class                                                        |
+| `libs/utils/result/result.ts`     | `Result<T>`, `successResult`, `errorResult`, `isSuccess`              |
+| `libs/utils/open-api/helpers.ts`  | `openApiParameter`, `openApiResponse`                                 |
 
 ## Commands
 
@@ -15,87 +27,51 @@ deno task test:api
 # Generate HTML docs for @serverx/utils
 deno task util-docs
 
-# Launch the MCP Inspector UI against the running server (requires user-api up)
-deno task mcp-inspect
-
-# One-shot CLI check: list tools exposed at /mcp
-deno task mcp-inspect:list
+# Launch MCP Inspector against the running server
+deno task mcp-inspect        # interactive UI (port 6274)
+deno task mcp-inspect:list   # one-shot tools/list to stdout
 
 # CI checks (run all before pushing)
-deno fmt --check   # formatting
-deno lint          # linting
-deno check         # type checking
-deno test          # unit tests (all *.spec.ts files)
+deno fmt --check
+deno lint
+deno check
+deno test
 
 # Run a single test file
 deno test libs/utils/result/result.spec.ts
 ```
 
-### Local MCP debugging with the Inspector
-
-The Inspector is the upstream `@modelcontextprotocol/inspector` package launched
-as a side-by-side dev tool — it spins up its own UI (port 6274) and proxy
-(port 6277) and connects to our `/mcp` endpoint as a client. Two-terminal
-workflow:
-
-```bash
-# Terminal 1 — start the server
-deno task user-api
-
-# Terminal 2 — start the Inspector
-deno task mcp-inspect
-#   1. The launcher prints a URL with a session token (?MCP_PROXY_AUTH_TOKEN=…).
-#      Open it in a browser.
-#   2. Transport: "Streamable HTTP"
-#   3. Server URL: http://127.0.0.1:3100/mcp
-#   4. Connect → tools/list, tools/call, view raw JSON-RPC traffic.
-```
-
-For scripts and CI, `deno task mcp-inspect:list` exercises the full transport
-non-interactively and prints `tools/list` JSON to stdout.
-
-Fallback if Deno's npm compat ever breaks for the Inspector: run
-`npx @modelcontextprotocol/inspector` directly with the same arguments.
-
 ## Architecture
 
-This is a **Deno monorepo** (`deno.json` workspace) with two publishable
-libraries and an example app:
+Deno monorepo (`deno.json` workspace) with two publishable libraries and an
+example app:
 
-- `libs/server/` — `@serverx/server`: HTTP server, router, middlewares, and
-  healthcheck built on **Hono**
-- `libs/utils/` — `@serverx/utils`: Result types, pagination helpers, OpenAPI
-  builders, HTTP client with retry/circuit-breaker, and the `Logger` interface
-- `example/` — A full CRUD user API demonstrating **Vertical Slice Architecture
+- `libs/server/` — `@serverx/server`: HTTP server, router, middlewares,
+  healthcheck (built on Hono)
+- `libs/utils/` — `@serverx/utils`: Result types, pagination, OpenAPI builders,
+  HTTP client with retry/circuit-breaker, Logger interface
+- `example/` — Full CRUD user API demonstrating **Vertical Slice Architecture
   (VSA)**
 
-### The Action pattern (`@serverx/server`)
+### Action pattern (`@serverx/server`)
 
-An _Action_ is a plain TypeScript module (file) whose named exports define a
-route. `Router.addAction()` reads these exports to wire up both the HTTP handler
-and OpenAPI metadata automatically.
+An _Action_ is a plain TypeScript module whose named exports define a route.
+`Router.addAction()` wires both the HTTP handler and OpenAPI metadata.
 
-Required exports per action file:
+Required exports:
 
 ```ts
-export const path = "/:userId";          // Hono path pattern
-export const method = httpMethods.GET;   // from @serverx/utils
+export const path = "/:userId";
+export const method = httpMethods.GET;
 export function handler({ params, body, query, context }: ActionContext) { ... }
 ```
 
-Optional exports for OpenAPI generation:
-
-```ts
-export const tags = ["user"];
-export const description = "...";
-export const parameters = openApiParameter(...);
-export const responses = openApiResponse(...);
-```
+Optional OpenAPI exports: `tags`, `description`, `parameters`, `responses`.
 
 ### Business logic layer (`baseHandler`)
 
-Handlers in `example/user/*.handler.ts` use `baseHandler` from `@serverx/server`
-to apply Zod validation before calling the core logic:
+Handlers in `example/user/*.handler.ts` apply Zod validation then return
+`Result<T>`:
 
 ```ts
 export const getUser = baseHandler({
@@ -104,13 +80,13 @@ export const getUser = baseHandler({
 });
 ```
 
-Actions in `example/controllers/user/` import these handlers and adapt
-`ActionContext` into the handler's typed input.
+Actions in `example/controllers/user/` adapt `ActionContext` into the handler's
+typed input.
 
 ### Result type (`@serverx/utils`)
 
-All handlers return `Result<T>` — a discriminated union of `SuccessResult<T>`
-and `ErrorResult`. Use the helper constructors; never construct raw objects:
+All handlers return `Result<T>`. Use the constructors — never construct raw
+objects:
 
 ```ts
 successResult(data); // 200
@@ -119,37 +95,14 @@ successResult(null, statusCodes.NoContent); // 204
 errorResult("User not found", statusCodes.NotFound);
 ```
 
-The router's `actionHandler` checks `isSuccess(result)` and serializes
-accordingly; 204/3xx responses use `newResponse(null, status)`.
-
-### Server setup
-
-`Server` (from `@serverx/server`) wraps Hono and orchestrates routers,
-middlewares, and OpenAPI UI:
-
-```ts
-const app = new Server();
-app.addMiddleware(useLogger({ level: "debug" }));  // Pino-based
-app.addMiddleware(cors());
-app.addHealthCheck(healthcheck);
-app.addRouter(userRouter);
-app.addMcpRouter(userMcpRouter);
-app.addMcp({ path: "/mcp", name: "serverx-example", version: "1.0.0" });
-app.addOpenApi({ url: "/api-docs", ... });
-app.addOpenApiUi("/swagger-docs", swaggerUI({ url: "/api-docs" }));
-app.addOpenApiUi("/scalar-docs", scalarUI({ spec: { url: "/api-docs" } }));
-app.serve({ port: 3100, hostname: "127.0.0.1" });
-```
-
 ### MCP tool actions
 
-Alongside each HTTP `*.action.ts`, a sibling `*.mcp.ts` exposes the same
-business logic as an MCP tool. Both files import the same `*.handler.ts`, so the
-HTTP and MCP surfaces stay in sync. Required exports per `.mcp.ts`:
+Each `*.action.ts` has a sibling `*.mcp.ts` that imports the same
+`*.handler.ts`. Required exports:
 
 ```ts
-export const name = "get_user"; // snake_case tool id
-export const description = "Fetch a single user by id";
+export const name = "get_user"; // snake_case
+export const description = "...";
 export const inputSchema = { // raw shape, NOT z.object()
   userId: z.number().int().min(1),
 };
@@ -159,46 +112,39 @@ export function handler(input: { userId: number }) {
 }
 ```
 
-Aggregate the tools in `example/controllers/<feature>-mcp.ts` with an
-`McpRouter`, then register it via `app.addMcpRouter(...)`. The MCP transport is
-mounted with `app.addMcp({ path: "/mcp", name, version })` and serves Streamable
-HTTP (stateless, JSON response mode).
+Aggregate tools in `example/controllers/<feature>-mcp.ts` with `McpRouter`,
+register via `app.addMcpRouter(...)`. MCP transport is mounted with
+`app.addMcp({ path: "/mcp", name, version })` — Streamable HTTP, stateless.
 
 ### Logger
 
 `libs/utils/logger.ts` defines the `Logger` interface;
-`libs/server/logger/pino-logger.ts` provides `PinoLogger` as the concrete
-implementation. The `useLogger()` middleware wires `PinoLogger` into Hono's
-request lifecycle.
+`libs/server/logger/pino-logger.ts` provides `PinoLogger`. The `useLogger()`
+middleware wires it into Hono's request lifecycle.
 
 ### Adding a new vertical slice
 
-1. Create `example/<feature>/` with `<feature>.ts` (Zod schema + OpenAPI
-   schema), `<feature>.repository.ts`, and `*-<feature>.handler.ts` files.
-2. Create action modules in `example/controllers/<feature>/` (one file per
-   endpoint). For each `*.action.ts`, add a sibling `*.mcp.ts` that delegates to
-   the same handler.
-3. Wire actions into a new `Router` in `example/controllers/<feature>.ts`, and
-   tools into an `McpRouter` in `example/controllers/<feature>-mcp.ts`.
+1. Create `example/<feature>/` with `<feature>.ts` (Zod + OpenAPI schema),
+   `<feature>.repository.ts`, and `*-<feature>.handler.ts` files.
+2. Create `example/controllers/<feature>/` — one `*.action.ts` + `*.mcp.ts` per
+   endpoint.
+3. Aggregate into `example/controllers/<feature>.ts` (`Router`) and
+   `example/controllers/<feature>-mcp.ts` (`McpRouter`).
 4. Register both in `example/app.ts` via `app.addRouter(...)` and
    `app.addMcpRouter(...)`.
 
 ### Integration tests
 
-`example/controllers/*.spec.ts` files hit the live server at `127.0.0.1:3100`:
-`user.spec.ts` exercises the HTTP routes, and `user-mcp.spec.ts` exercises the
-MCP tools via the SDK `Client` + `StreamableHTTPClientTransport`. Run
-`deno task user-api` in a separate terminal before executing
-`deno task test:api`.
+`example/controllers/*.spec.ts` hit the live server at `127.0.0.1:3100`. Run
+`deno task user-api` in a separate terminal before `deno task test:api`.
 
 ## Development guidelines
 
 - **New functionality = new vertical slice.** Add a new folder rather than
-  extending an existing one, unless the logic is directly related to that slice.
-- **Always use `@serverx/server` and `@serverx/utils`** for all server-related
-  logic — do not reach for external HTTP frameworks or utility libraries.
+  extending an existing one.
+- **Always use `@serverx/server` and `@serverx/utils`** — do not reach for
+  external HTTP frameworks or utility libraries.
 - **Every API endpoint must include OpenAPI metadata** — `tags`, `description`,
-  `parameters`, and `responses` exports alongside the required `path`, `method`,
-  and `handler`.
+  `parameters`, and `responses`.
 - **HTTP and MCP must share the same handler.** Both `*.action.ts` and
-  `*.mcp.ts` import the same `*.handler.ts` so behaviour cannot diverge.
+  `*.mcp.ts` import the same `*.handler.ts`.

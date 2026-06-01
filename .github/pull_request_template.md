@@ -1,4 +1,4 @@
-## Pull Request Title
+## Description
 
 <!-- Describe the purpose of this pull request in one or two sentences. -->
 
@@ -38,7 +38,7 @@
 
 <!-- Check all the applicable boxes before submitting the PR. -->
 
-- [ ] I have run the tests and verified the functionality.
+- [ ] I have run the integration tests and verified the functionality.
 - [ ] I have updated the documentation where necessary.
 - [ ] I have added comments for clarity (if needed).
 - [ ] This PR adheres to the contributing guidelines.

@@ -1,6 +1,10 @@
 # Example App
 
-The [`example/`](https://github.com/MihirJayavant/serverx/tree/main/example) directory contains a full CRUD user API that demonstrates every major ServerX feature. It follows **Vertical Slice Architecture (VSA)** — each feature owns its schema, repository, handlers, HTTP actions, and MCP tools in a single folder.
+The [`example/`](https://github.com/MihirJayavant/serverx/tree/main/example)
+directory contains a full CRUD user API that demonstrates every major ServerX
+feature. It follows **Vertical Slice Architecture (VSA)** — each feature owns
+its schema, repository, handlers, HTTP actions, and MCP tools in a single
+folder.
 
 ---
 
@@ -22,14 +26,14 @@ deno task mcp-inspect:list
 
 Endpoints once running:
 
-| URL | Description |
-|---|---|
-| `http://127.0.0.1:3100/users` | User CRUD API |
-| `http://127.0.0.1:3100/healthcheck` | Health check |
-| `http://127.0.0.1:3100/api-docs` | OpenAPI JSON |
-| `http://127.0.0.1:3100/swagger-docs` | Swagger UI |
-| `http://127.0.0.1:3100/scalar-docs` | Scalar UI |
-| `http://127.0.0.1:3100/mcp` | MCP Streamable HTTP |
+| URL                                  | Description         |
+| ------------------------------------ | ------------------- |
+| `http://127.0.0.1:3100/users`        | User CRUD API       |
+| `http://127.0.0.1:3100/healthcheck`  | Health check        |
+| `http://127.0.0.1:3100/api-docs`     | OpenAPI JSON        |
+| `http://127.0.0.1:3100/swagger-docs` | Swagger UI          |
+| `http://127.0.0.1:3100/scalar-docs`  | Scalar UI           |
+| `http://127.0.0.1:3100/mcp`          | MCP Streamable HTTP |
 
 ---
 
@@ -75,7 +79,8 @@ user/
 └── *.handler.ts         ← business logic (used by both HTTP and MCP)
 ```
 
-The controller layer adapts the framework context into the handler's typed input:
+The controller layer adapts the framework context into the handler's typed
+input:
 
 ```
 controllers/user/
@@ -102,7 +107,11 @@ app.addHealthCheck(healthcheck);
 app.addRouter(userRouter);
 app.addMcpRouter(userMcpRouter);
 
-app.addOpenApi({ url: "/api-docs", openapi: "3.1.0", info: { version: "1.0.0", title: "ServerX Example" } });
+app.addOpenApi({
+  url: "/api-docs",
+  openapi: "3.1.0",
+  info: { version: "1.0.0", title: "ServerX Example" },
+});
 app.addOpenApiUi("/swagger-docs", swaggerUI({ url: "/api-docs" }));
 app.addOpenApiUi("/scalar-docs", scalarUI({ spec: { url: "/api-docs" } }));
 app.addMcp({ path: "/mcp", name: "serverx-example", version: "1.0.0" });
@@ -135,8 +144,17 @@ export const path = "/:id";
 export const method = httpMethods.GET;
 export const tags = ["user"];
 export const description = "Get user by id";
-export const parameters = openApiParameter({ name: "id", in: "path", required: true, schema: { type: "number" } });
-export const responses = openApiResponse({ status: 200, description: "User", schema: userSchema });
+export const parameters = openApiParameter({
+  name: "id",
+  in: "path",
+  required: true,
+  schema: { type: "number" },
+});
+export const responses = openApiResponse({
+  status: 200,
+  description: "User",
+  schema: userSchema,
+});
 
 export function handler({ params }: ActionContext) {
   return getUserHandler({ id: Number(params.id) });
@@ -165,7 +183,8 @@ export { router as userMcpRouter };
 
 ## Integration Tests
 
-Tests hit the live server at `127.0.0.1:3100` — start the server before running them.
+Tests hit the live server at `127.0.0.1:3100` — start the server before running
+them.
 
 ```bash
 # HTTP routes
@@ -182,10 +201,13 @@ deno task test:api
 
 ## Adding a New Vertical Slice
 
-1. Create `example/<feature>/` with `<feature>.ts` (schema), `<feature>.repository.ts`, and `*.<feature>.handler.ts` files
-2. Create `example/controllers/<feature>/` with one `*.action.ts` per endpoint and a sibling `*.mcp.ts` per tool
+1. Create `example/<feature>/` with `<feature>.ts` (schema),
+   `<feature>.repository.ts`, and `*.<feature>.handler.ts` files
+2. Create `example/controllers/<feature>/` with one `*.action.ts` per endpoint
+   and a sibling `*.mcp.ts` per tool
 3. Aggregate HTTP actions in `example/controllers/<feature>.ts` (a `Router`)
-4. Aggregate MCP tools in `example/controllers/<feature>-mcp.ts` (an `McpRouter`)
+4. Aggregate MCP tools in `example/controllers/<feature>-mcp.ts` (an
+   `McpRouter`)
 5. Register both in `example/app.ts`
 
 ---

@@ -1,6 +1,8 @@
 # Virtual Entity
 
-`VirtualEntity` is a lifecycle abstraction for domain entities that need async setup immediately after creation — for example, writing to a database before returning the entity to the caller.
+`VirtualEntity` is a lifecycle abstraction for domain entities that need async
+setup immediately after creation — for example, writing to a database before
+returning the entity to the caller.
 
 ```ts
 import { createVirtualEntity, type VirtualEntity } from "@serverx/server";
@@ -20,21 +22,23 @@ type VirtualEntity<T> = {
 };
 ```
 
-| Field | Description |
-|---|---|
-| `data` | Optional payload associated with the entity |
+| Field      | Description                                                       |
+| ---------- | ----------------------------------------------------------------- |
+| `data`     | Optional payload associated with the entity                       |
 | `onCreate` | Called once when the entity is first created, receives the new ID |
-| `onSave` | Called on subsequent saves / updates |
+| `onSave`   | Called on subsequent saves / updates                              |
 
 ### `CreatedVirtualEntity<TData, TEntity>`
 
-The type returned by `createVirtualEntity` — identical to `VirtualEntity` but without the `onCreate` method (it has already been called).
+The type returned by `createVirtualEntity` — identical to `VirtualEntity` but
+without the `onCreate` method (it has already been called).
 
 ---
 
 ## `createVirtualEntity(id, entity)`
 
-Calls `entity.onCreate(id)` and returns the entity without the `onCreate` method. This ensures `onCreate` can only ever be called once.
+Calls `entity.onCreate(id)` and returns the entity without the `onCreate`
+method. This ensures `onCreate` can only ever be called once.
 
 ```ts
 const created = await createVirtualEntity("user-123", entity);
@@ -48,7 +52,7 @@ await created.onSave();
 
 ```ts
 import { createVirtualEntity, type VirtualEntity } from "@serverx/server";
-import { successResult, statusCodes } from "@serverx/utils";
+import { statusCodes, successResult } from "@serverx/utils";
 
 type UserData = { name: string; email: string };
 

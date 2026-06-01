@@ -1,6 +1,9 @@
 # OpenAPI
 
-`@serverx/utils` provides typed builders for OpenAPI parameters, request bodies, and responses. `@serverx/server` provides UI renderers for Swagger and Scalar. All metadata is registered automatically when you call `addAction()` — no separate spec writing needed.
+`@serverx/utils` provides typed builders for OpenAPI parameters, request bodies,
+and responses. `@serverx/server` provides UI renderers for Swagger and Scalar.
+All metadata is registered automatically when you call `addAction()` — no
+separate spec writing needed.
 
 ---
 
@@ -13,7 +16,7 @@ import { openApiParameter } from "@serverx/utils";
 
 export const parameters = openApiParameter({
   name: "userId",
-  in: "path",           // "path" | "query" | "header" | "cookie"
+  in: "path", // "path" | "query" | "header" | "cookie"
   description: "ID of the user",
   required: true,
   schema: { type: "string", format: "uuid" },
@@ -26,8 +29,18 @@ Pass an array to define more than one:
 
 ```ts
 export const parameters = [
-  openApiParameter({ name: "userId", in: "path", required: true, schema: { type: "string" } }),
-  openApiParameter({ name: "includeDeleted", in: "query", required: false, schema: { type: "boolean" } }),
+  openApiParameter({
+    name: "userId",
+    in: "path",
+    required: true,
+    schema: { type: "string" },
+  }),
+  openApiParameter({
+    name: "includeDeleted",
+    in: "query",
+    required: false,
+    schema: { type: "boolean" },
+  }),
 ];
 ```
 
@@ -93,7 +106,8 @@ export const requestBody = openApiRequestBody({
 
 ## Schema Property Types
 
-All three helpers accept a `schema` that follows the `SchemaProperty` recursive type:
+All three helpers accept a `schema` that follows the `SchemaProperty` recursive
+type:
 
 ```ts
 // Primitive
@@ -168,27 +182,32 @@ Visit `http://127.0.0.1:3100/swagger-docs`.
 ```ts
 import { scalarUI } from "@serverx/server";
 
-app.addOpenApiUi("/scalar-docs", scalarUI({
-  spec: { url: "/api-docs" },
-  theme: "deepSpace",
-}));
+app.addOpenApiUi(
+  "/scalar-docs",
+  scalarUI({
+    spec: { url: "/api-docs" },
+    theme: "deepSpace",
+  }),
+);
 ```
 
 Visit `http://127.0.0.1:3100/scalar-docs`.
 
-**Available themes:** `alternate`, `default`, `moon`, `purple`, `solarized`, `bluePlanet`, `deepSpace`, `saturn`, `kepler`, `mars`, `none`
+**Available themes:** `alternate`, `default`, `moon`, `purple`, `solarized`,
+`bluePlanet`, `deepSpace`, `saturn`, `kepler`, `mars`, `none`
 
 ---
 
 ## Generating HTML Directly
 
-If you need the raw HTML outside of Hono, use the lower-level generators from `@serverx/utils`:
+If you need the raw HTML outside of Hono, use the lower-level generators from
+`@serverx/utils`:
 
 ```ts
 import { scalarUIGen, swaggerUIGen } from "@serverx/utils";
 
 const swaggerHtml = swaggerUIGen({ url: "/api-docs" });
-const scalarHtml  = scalarUIGen({ spec: { url: "/api-docs" }, theme: "moon" });
+const scalarHtml = scalarUIGen({ spec: { url: "/api-docs" }, theme: "moon" });
 ```
 
 ---
@@ -196,7 +215,12 @@ const scalarHtml  = scalarUIGen({ spec: { url: "/api-docs" }, theme: "moon" });
 ## Full Action Example
 
 ```ts
-import { httpMethods, openApiParameter, openApiRequestBody, openApiResponse } from "@serverx/utils";
+import {
+  httpMethods,
+  openApiParameter,
+  openApiRequestBody,
+  openApiResponse,
+} from "@serverx/utils";
 
 router.addAction({
   path: "/",
@@ -213,8 +237,16 @@ router.addAction({
     },
   }),
   responses: [
-    openApiResponse({ status: 201, description: "Created user", schema: { type: "object" } }),
-    openApiResponse({ status: 400, description: "Validation error", schema: { type: "object" } }),
+    openApiResponse({
+      status: 201,
+      description: "Created user",
+      schema: { type: "object" },
+    }),
+    openApiResponse({
+      status: 400,
+      description: "Validation error",
+      schema: { type: "object" },
+    }),
   ],
   handler: async ({ body }) => {
     const input = await body();

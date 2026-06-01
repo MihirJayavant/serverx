@@ -1,6 +1,7 @@
 # Utility Types
 
-`@serverx/utils` exports a small set of TypeScript utility types for common patterns in API development.
+`@serverx/utils` exports a small set of TypeScript utility types for common
+patterns in API development.
 
 ```ts
 import type {
@@ -17,26 +18,29 @@ import type {
 
 ## `Prettify<T>`
 
-Flattens intersection types into a single object type, making IDE hover tooltips and error messages much more readable.
+Flattens intersection types into a single object type, making IDE hover tooltips
+and error messages much more readable.
 
 ```ts
 type A = { id: string };
 type B = { name: string };
 
-type Raw    = A & B;
+type Raw = A & B;
 // Hover shows: A & B
 
-type Clean  = Prettify<A & B>;
+type Clean = Prettify<A & B>;
 // Hover shows: { id: string; name: string }
 ```
 
-Most useful when you compose types from multiple interfaces and want the resulting type to be human-readable.
+Most useful when you compose types from multiple interfaces and want the
+resulting type to be human-readable.
 
 ---
 
 ## `StrictOmit<T, K>`
 
-Like TypeScript's built-in `Omit`, but does not widen the resulting type. The remaining properties stay as strongly typed as in the original.
+Like TypeScript's built-in `Omit`, but does not widen the resulting type. The
+remaining properties stay as strongly typed as in the original.
 
 ```ts
 type User = { id: string; name: string; email: string };
@@ -45,7 +49,8 @@ type UserWithoutId = StrictOmit<User, "id">;
 // { name: string; email: string }
 ```
 
-Use `StrictOmit` instead of `Omit` when you need the result to remain assignable to a strict contract.
+Use `StrictOmit` instead of `Omit` when you need the result to remain assignable
+to a strict contract.
 
 ---
 
@@ -66,7 +71,8 @@ Ideal for PATCH request payloads where only the identifier is required.
 
 ## `Task<T>`
 
-Represents a value that may be synchronous or asynchronous. Used throughout ServerX to allow handlers to return either `T` or `Promise<T>`.
+Represents a value that may be synchronous or asynchronous. Used throughout
+ServerX to allow handlers to return either `T` or `Promise<T>`.
 
 ```ts
 type Task<T> = T | Promise<T>;
@@ -101,7 +107,8 @@ type JsonType =
 type JsonArray = JsonType[];
 ```
 
-`Result<T>` constrains `T extends JsonType`, ensuring all handler return values are serializable.
+`Result<T>` constrains `T extends JsonType`, ensuring all handler return values
+are serializable.
 
 ```ts
 // Valid
@@ -115,7 +122,8 @@ successResult(new Date());
 
 ## `OpenApiQueryTransform<T>`
 
-Transforms the types of number and boolean fields in `T` to `string`, reflecting how Hono parses query string parameters before you coerce them.
+Transforms the types of number and boolean fields in `T` to `string`, reflecting
+how Hono parses query string parameters before you coerce them.
 
 ```ts
 type Params = { page: number; pageSize: number; active: boolean };
@@ -124,7 +132,8 @@ type QueryParams = OpenApiQueryTransform<Params>;
 // { page: string; pageSize: string; active: string }
 ```
 
-Use this as the `TQuery` type parameter on `ActionContext` when your action reads numeric or boolean query params.
+Use this as the `TQuery` type parameter on `ActionContext` when your action
+reads numeric or boolean query params.
 
 ---
 

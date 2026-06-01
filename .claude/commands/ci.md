@@ -1,6 +1,7 @@
 Run all CI checks for this repo in order and report results.
 
-Execute these commands sequentially — stop and report the failure if any step exits non-zero:
+Execute these commands sequentially — stop and report the failure if any step
+exits non-zero:
 
 ```
 deno fmt --check
@@ -32,4 +33,5 @@ kill $SERVER_PID 2>/dev/null
 exit $TEST_EXIT
 ```
 
-For each step, report: pass or fail, and on failure show the relevant error output so it can be fixed immediately.
+For each step, report: pass or fail, and on failure show the relevant error
+output so it can be fixed immediately.

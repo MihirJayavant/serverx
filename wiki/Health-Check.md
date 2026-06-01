@@ -1,6 +1,7 @@
 # Health Check
 
-ServerX provides a built-in health check handler that reports dependency status and system metrics. Register it via `app.addHealthCheck()`.
+ServerX provides a built-in health check handler that reports dependency status
+and system metrics. Register it via `app.addHealthCheck()`.
 
 ```ts
 import { healthCheckHandler, healthCheckResponse } from "@serverx/server";
@@ -29,7 +30,8 @@ app.addHealthCheck({
 
 ## Checking Dependencies
 
-Pass a `dependencies` array to probe external services. Each dependency runs an async `check()` that returns `true` (healthy) or `false` (unhealthy).
+Pass a `dependencies` array to probe external services. Each dependency runs an
+async `check()` that returns `true` (healthy) or `false` (unhealthy).
 
 ```ts
 handler: () =>
@@ -89,17 +91,18 @@ handler: () =>
 
 ### System metrics
 
-| Field | Description |
-|---|---|
-| `cpuLoad` | 1-minute CPU load average |
-| `freeMemory` | Free memory in MB |
+| Field         | Description               |
+| ------------- | ------------------------- |
+| `cpuLoad`     | 1-minute CPU load average |
+| `freeMemory`  | Free memory in MB         |
 | `totalMemory` | Total system memory in MB |
 
 ---
 
 ## OpenAPI Metadata
 
-`healthCheckResponse()` returns pre-built OpenAPI response schemas covering both the `200` and `500` cases, so you do not need to write them manually.
+`healthCheckResponse()` returns pre-built OpenAPI response schemas covering both
+the `200` and `500` cases, so you do not need to write them manually.
 
 ```ts
 responses: healthCheckResponse(),

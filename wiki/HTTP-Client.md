@@ -1,6 +1,8 @@
 # HTTP Client
 
-`@serverx/utils` ships a typed fetch wrapper (`HttpClient`) with retry and circuit breaker support built in — useful for calling external APIs from your handlers.
+`@serverx/utils` ships a typed fetch wrapper (`HttpClient`) with retry and
+circuit breaker support built in — useful for calling external APIs from your
+handlers.
 
 ```ts
 import { CircuitBreaker, HttpClient, withRetry } from "@serverx/utils";
@@ -33,12 +35,12 @@ const client = new HttpClient({
 });
 ```
 
-| Option | Type | Description |
-|---|---|---|
-| `baseUrl` | `string` | Base URL prepended to every path |
-| `headers` | `Record<string, string>` | Default headers sent with every request |
-| `retryOptions` | `RetryOptions` | Retry configuration (see below) |
-| `circuitBreaker` | `CircuitBreakerOptions` | Circuit breaker configuration (see below) |
+| Option           | Type                     | Description                               |
+| ---------------- | ------------------------ | ----------------------------------------- |
+| `baseUrl`        | `string`                 | Base URL prepended to every path          |
+| `headers`        | `Record<string, string>` | Default headers sent with every request   |
+| `retryOptions`   | `RetryOptions`           | Retry configuration (see below)           |
+| `circuitBreaker` | `CircuitBreakerOptions`  | Circuit breaker configuration (see below) |
 
 ### Methods
 
@@ -47,19 +49,26 @@ const client = new HttpClient({
 const user = await client.get<User>("/users/1");
 
 // POST
-const created = await client.post<User, CreateUserDto>("/users", { name: "Alice" });
+const created = await client.post<User, CreateUserDto>("/users", {
+  name: "Alice",
+});
 
 // PUT
-const updated = await client.put<User, UpdateUserDto>("/users/1", { name: "Alice B." });
+const updated = await client.put<User, UpdateUserDto>("/users/1", {
+  name: "Alice B.",
+});
 
 // PATCH
-const patched = await client.patch<User, Partial<User>>("/users/1", { name: "Alice B." });
+const patched = await client.patch<User, Partial<User>>("/users/1", {
+  name: "Alice B.",
+});
 
 // DELETE
 await client.delete<void>("/users/1");
 ```
 
-All methods accept an optional second (or third) `options` argument for per-request headers and other fetch options.
+All methods accept an optional second (or third) `options` argument for
+per-request headers and other fetch options.
 
 ---
 
@@ -73,7 +82,7 @@ Use `withRetry` directly for one-off calls without an `HttpClient` instance.
 import { withRetry } from "@serverx/utils";
 
 const data = await withRetry(
-  () => fetch("https://api.example.com/data").then(r => r.json()),
+  () => fetch("https://api.example.com/data").then((r) => r.json()),
   {
     maxRetries: 3,
     delayMs: 500,
@@ -85,36 +94,41 @@ const data = await withRetry(
 
 ### RetryOptions
 
-| Option | Type | Default | Description |
-|---|---|---|---|
-| `maxRetries` | `number` | — | Maximum number of retry attempts |
-| `delayMs` | `number` | — | Base delay between retries in milliseconds |
-| `useExponentialBackoff` | `boolean` | `false` | Double the delay on each retry |
-| `shouldRetry` | `(error: unknown) => boolean` | always true | Custom predicate to decide whether to retry |
+| Option                  | Type                          | Default     | Description                                 |
+| ----------------------- | ----------------------------- | ----------- | ------------------------------------------- |
+| `maxRetries`            | `number`                      | —           | Maximum number of retry attempts            |
+| `delayMs`               | `number`                      | —           | Base delay between retries in milliseconds  |
+| `useExponentialBackoff` | `boolean`                     | `false`     | Double the delay on each retry              |
+| `shouldRetry`           | `(error: unknown) => boolean` | always true | Custom predicate to decide whether to retry |
 
 ---
 
 ## Circuit Breaker
 
-The circuit breaker prevents cascading failures by stopping calls to a service that is repeatedly failing.
+The circuit breaker prevents cascading failures by stopping calls to a service
+that is repeatedly failing.
 
 ### States
 
-| State | Description |
-|---|---|
-| `CLOSED` | Normal operation — requests pass through |
-| `OPEN` | Service is failing — requests are blocked immediately |
+| State       | Description                                                         |
+| ----------- | ------------------------------------------------------------------- |
+| `CLOSED`    | Normal operation — requests pass through                            |
+| `OPEN`      | Service is failing — requests are blocked immediately               |
 | `HALF_OPEN` | Testing recovery — a limited number of requests are allowed through |
 
 ### `CircuitBreaker` class
 
 ```ts
-import { CircuitBreaker, CircuitBreakerError, CircuitState } from "@serverx/utils";
+import {
+  CircuitBreaker,
+  CircuitBreakerError,
+  CircuitState,
+} from "@serverx/utils";
 
 const breaker = new CircuitBreaker({
-  failureThreshold: 5,     // open after 5 consecutive failures
-  resetTimeoutMs: 10_000,  // try HALF_OPEN after 10 seconds
-  successThreshold: 2,     // close after 2 successes in HALF_OPEN
+  failureThreshold: 5, // open after 5 consecutive failures
+  resetTimeoutMs: 10_000, // try HALF_OPEN after 10 seconds
+  successThreshold: 2, // close after 2 successes in HALF_OPEN
 });
 
 try {
@@ -134,12 +148,12 @@ breaker.forceState(CircuitState.CLOSED);
 
 ### CircuitBreakerOptions
 
-| Option | Type | Default | Description |
-|---|---|---|---|
-| `failureThreshold` | `number` | — | Consecutive failures before opening |
-| `resetTimeoutMs` | `number` | — | Milliseconds to wait before trying HALF_OPEN |
-| `successThreshold` | `number` | `1` | Successes in HALF_OPEN before closing |
-| `shouldCountAsFailure` | `(error: unknown) => boolean` | always true | Custom predicate to classify errors |
+| Option                 | Type                          | Default     | Description                                  |
+| ---------------------- | ----------------------------- | ----------- | -------------------------------------------- |
+| `failureThreshold`     | `number`                      | —           | Consecutive failures before opening          |
+| `resetTimeoutMs`       | `number`                      | —           | Milliseconds to wait before trying HALF_OPEN |
+| `successThreshold`     | `number`                      | `1`         | Successes in HALF_OPEN before closing        |
+| `shouldCountAsFailure` | `(error: unknown) => boolean` | always true | Custom predicate to classify errors          |
 
 ### `withCircuitBreaker(fn, breaker)`
 
@@ -155,7 +169,8 @@ const result = await withCircuitBreaker(() => callExternalService(), breaker);
 
 ## Combined: Retry + Circuit Breaker
 
-When both are configured on `HttpClient`, retries happen first, then the circuit breaker tracks the final outcome of each call.
+When both are configured on `HttpClient`, retries happen first, then the circuit
+breaker tracks the final outcome of each call.
 
 ```ts
 const client = new HttpClient({

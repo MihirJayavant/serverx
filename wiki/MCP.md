@@ -1,18 +1,23 @@
 # MCP — Model Context Protocol
 
-ServerX has first-class support for the [Model Context Protocol](https://modelcontextprotocol.io), letting you expose your business logic as AI-agent tools alongside the HTTP API. Both surfaces share the same handlers so behaviour cannot diverge.
+ServerX has first-class support for the
+[Model Context Protocol](https://modelcontextprotocol.io), letting you expose
+your business logic as AI-agent tools alongside the HTTP API. Both surfaces
+share the same handlers so behaviour cannot diverge.
 
-The MCP endpoint uses **Streamable HTTP** transport (stateless, JSON response mode), compatible with any MCP client including Claude Desktop, Cursor, and the [MCP Inspector](https://github.com/modelcontextprotocol/inspector).
+The MCP endpoint uses **Streamable HTTP** transport (stateless, JSON response
+mode), compatible with any MCP client including Claude Desktop, Cursor, and the
+[MCP Inspector](https://github.com/modelcontextprotocol/inspector).
 
 ---
 
 ## Concepts
 
-| Term | Description |
-|---|---|
-| **McpRouter** | A container that holds a set of tools (analogous to `Router` for HTTP) |
-| **McpToolAction** | A single tool definition: name, description, input schema, handler |
-| **MCP endpoint** | The Streamable HTTP handler mounted via `app.addMcp()` |
+| Term              | Description                                                            |
+| ----------------- | ---------------------------------------------------------------------- |
+| **McpRouter**     | A container that holds a set of tools (analogous to `Router` for HTTP) |
+| **McpToolAction** | A single tool definition: name, description, input schema, handler     |
+| **MCP endpoint**  | The Streamable HTTP handler mounted via `app.addMcp()`                 |
 
 ---
 
@@ -32,10 +37,10 @@ const mcpRouter = new McpRouter();
 import { z } from "zod/v4";
 
 mcpRouter.addTool({
-  name: "get_user",                        // snake_case tool ID
+  name: "get_user", // snake_case tool ID
   description: "Fetch a single user by ID",
   inputSchema: {
-    id: z.string().uuid(),                 // raw shape — NOT z.object()
+    id: z.string().uuid(), // raw shape — NOT z.object()
   },
   annotations: { readOnlyHint: true },
   handler: ({ id }) => getUserHandler({ id }),
@@ -53,27 +58,28 @@ app.addMcp({ path: "/mcp", name: "my-api", version: "1.0.0" });
 
 ## McpToolAction Fields
 
-| Field | Type | Required | Description |
-|---|---|---|---|
-| `name` | `string` | Yes | Snake_case tool identifier shown to AI clients |
-| `description` | `string` | Yes | Human-readable description of what the tool does |
-| `inputSchema` | `Record<string, ZodType>` | Yes | Raw Zod shape (not `z.object()`) |
-| `handler` | `(input) => Task<Result<T>>` | Yes | Business logic — same function as the HTTP handler |
-| `annotations` | `McpToolAnnotations` | No | Hints to AI clients about tool behaviour |
+| Field         | Type                         | Required | Description                                        |
+| ------------- | ---------------------------- | -------- | -------------------------------------------------- |
+| `name`        | `string`                     | Yes      | Snake_case tool identifier shown to AI clients     |
+| `description` | `string`                     | Yes      | Human-readable description of what the tool does   |
+| `inputSchema` | `Record<string, ZodType>`    | Yes      | Raw Zod shape (not `z.object()`)                   |
+| `handler`     | `(input) => Task<Result<T>>` | Yes      | Business logic — same function as the HTTP handler |
+| `annotations` | `McpToolAnnotations`         | No       | Hints to AI clients about tool behaviour           |
 
 ---
 
 ## Tool Annotations
 
-Annotations are optional hints that help AI clients reason about tool safety and behaviour.
+Annotations are optional hints that help AI clients reason about tool safety and
+behaviour.
 
-| Field | Type | Description |
-|---|---|---|
-| `title` | `string` | Human-readable display name |
-| `readOnlyHint` | `boolean` | Tool does not modify state |
-| `destructiveHint` | `boolean` | Tool may delete or overwrite data |
-| `idempotentHint` | `boolean` | Repeated calls have no additional effect |
-| `openWorldHint` | `boolean` | Tool interacts with external services |
+| Field             | Type      | Description                              |
+| ----------------- | --------- | ---------------------------------------- |
+| `title`           | `string`  | Human-readable display name              |
+| `readOnlyHint`    | `boolean` | Tool does not modify state               |
+| `destructiveHint` | `boolean` | Tool may delete or overwrite data        |
+| `idempotentHint`  | `boolean` | Repeated calls have no additional effect |
+| `openWorldHint`   | `boolean` | Tool interacts with external services    |
 
 ```ts
 annotations: {
@@ -90,7 +96,8 @@ annotations: {
 
 ## Sharing Handlers with HTTP
 
-The key rule: **HTTP and MCP must import the same handler function**. Create a `*.handler.ts` file and import it from both `*.action.ts` and `*.mcp.ts`.
+The key rule: **HTTP and MCP must import the same handler function**. Create a
+`*.handler.ts` file and import it from both `*.action.ts` and `*.mcp.ts`.
 
 ```ts
 // get-user.handler.ts
@@ -98,7 +105,9 @@ export const getUserHandler = baseHandler({
   validationSchema: z.object({ id: z.string().uuid() }),
   handler: async ({ id }) => {
     const user = await db.users.findById(id);
-    return user ? successResult(user) : errorResult("Not found", statusCodes.NotFound);
+    return user
+      ? successResult(user)
+      : errorResult("Not found", statusCodes.NotFound);
   },
 });
 ```

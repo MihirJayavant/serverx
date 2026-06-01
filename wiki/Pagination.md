@@ -1,13 +1,15 @@
 # Pagination
 
-`@serverx/utils` provides helpers for both offset-based and cursor-based pagination. Both are database-agnostic — you supply the data and counts; the helpers format the response.
+`@serverx/utils` provides helpers for both offset-based and cursor-based
+pagination. Both are database-agnostic — you supply the data and counts; the
+helpers format the response.
 
 ```ts
 import {
   convertSelector,
-  offsetPaginate,
   type CursorPaginatedResult,
   type CursorPaginationParams,
+  offsetPaginate,
   type OffsetPaginatedResult,
   type OffsetPaginationParams,
 } from "@serverx/utils";
@@ -23,8 +25,8 @@ Best for UIs that show page numbers (e.g. "Page 3 of 12").
 
 ```ts
 type OffsetPaginationParams = {
-  page?: number;                      // 1-based, defaults to 1
-  pageSize?: number;                  // defaults to 20
+  page?: number; // 1-based, defaults to 1
+  pageSize?: number; // defaults to 20
   filters?: FilteringParams;
   sort?: SortingParams[];
 };
@@ -72,7 +74,8 @@ Response:
 
 ### OpenAPI query parameters
 
-`offsetPaginationParamSchema` is a pre-built OpenAPI parameter array for `page` and `pageSize`:
+`offsetPaginationParamSchema` is a pre-built OpenAPI parameter array for `page`
+and `pageSize`:
 
 ```ts
 import { offsetPaginationParamSchema } from "@serverx/utils";
@@ -84,14 +87,15 @@ export const parameters = offsetPaginationParamSchema;
 
 ## Cursor Pagination
 
-Best for infinite-scroll UIs or feeds where you navigate forward and backward through a stream of items.
+Best for infinite-scroll UIs or feeds where you navigate forward and backward
+through a stream of items.
 
 ### Types
 
 ```ts
 type CursorPaginationParams = {
-  after?: string;                     // cursor pointing to start of next page
-  before?: string;                    // cursor pointing to start of previous page
+  after?: string; // cursor pointing to start of next page
+  before?: string; // cursor pointing to start of previous page
   limit: number;
   filters?: FilteringParams;
   sort?: SortingParams[];
@@ -107,7 +111,8 @@ type CursorPaginatedResult<T> = {
 
 ### Example
 
-There is no `cursorPaginate()` helper because cursor logic is tightly coupled to your database's cursor format. Implement it directly:
+There is no `cursorPaginate()` helper because cursor logic is tightly coupled to
+your database's cursor format. Implement it directly:
 
 ```ts
 import { type CursorPaginatedResult, type CursorPaginationParams, successResult } from "@serverx/utils";
@@ -151,13 +156,15 @@ type SortingParams = {
 };
 ```
 
-Pass these through to your database query directly — the helpers do not process them automatically.
+Pass these through to your database query directly — the helpers do not process
+them automatically.
 
 ---
 
 ## Selector Helper
 
-`convertSelector` converts an array of field names into a projection map compatible with most database libraries (e.g. MongoDB, Prisma `select`).
+`convertSelector` converts an array of field names into a projection map
+compatible with most database libraries (e.g. MongoDB, Prisma `select`).
 
 ```ts
 import { convertSelector } from "@serverx/utils";

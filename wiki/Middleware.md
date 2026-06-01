@@ -1,17 +1,20 @@
 # Middleware
 
-Middleware is registered globally on the [[Server]] via `addMiddleware()`, or scoped to a [[Router-and-Actions|Router]] via `router.addMiddleware()`. Middleware runs in registration order.
+Middleware is registered globally on the [[Server]] via `addMiddleware()`, or
+scoped to a [[Router-and-Actions|Router]] via `router.addMiddleware()`.
+Middleware runs in registration order.
 
 ```ts
-app.addMiddleware(fn);      // global
-router.addMiddleware(fn);   // router-scoped
+app.addMiddleware(fn); // global
+router.addMiddleware(fn); // router-scoped
 ```
 
 ---
 
 ## useLogger
 
-Logs every incoming request with method, URL, headers, path parameters, and query string using [Pino](https://getpino.io).
+Logs every incoming request with method, URL, headers, path parameters, and
+query string using [Pino](https://getpino.io).
 
 ```ts
 import { useLogger } from "@serverx/server";
@@ -20,8 +23,8 @@ app.addMiddleware(useLogger());
 app.addMiddleware(useLogger({ level: "debug" }));
 ```
 
-| Option | Type | Default | Description |
-|---|---|---|---|
+| Option  | Type                                     | Default  | Description       |
+| ------- | ---------------------------------------- | -------- | ----------------- |
 | `level` | `"debug" \| "info" \| "warn" \| "error"` | `"info"` | Minimum log level |
 
 ### Log output
@@ -52,7 +55,8 @@ deno task user-api | pino-pretty
 
 ## cors
 
-Re-exported directly from [Hono](https://hono.dev/docs/middleware/builtin/cors) — accepts the same options.
+Re-exported directly from [Hono](https://hono.dev/docs/middleware/builtin/cors)
+— accepts the same options.
 
 ```ts
 import { cors } from "@serverx/server";
@@ -76,7 +80,8 @@ app.addMiddleware(cors({
 
 ## swaggerUI
 
-Returns a Hono handler that renders the [Swagger UI](https://swagger.io/tools/swagger-ui/) at the given path.
+Returns a Hono handler that renders the
+[Swagger UI](https://swagger.io/tools/swagger-ui/) at the given path.
 
 ```ts
 import { swaggerUI } from "@serverx/server";
@@ -84,33 +89,38 @@ import { swaggerUI } from "@serverx/server";
 app.addOpenApiUi("/swagger-docs", swaggerUI({ url: "/api-docs" }));
 ```
 
-| Option | Type | Default | Description |
-|---|---|---|---|
-| `url` | `string` | `"/api-docs"` | URL of the OpenAPI JSON spec |
-| `version` | `string` | latest | Swagger UI CDN version to load |
+| Option    | Type     | Default       | Description                    |
+| --------- | -------- | ------------- | ------------------------------ |
+| `url`     | `string` | `"/api-docs"` | URL of the OpenAPI JSON spec   |
+| `version` | `string` | latest        | Swagger UI CDN version to load |
 
 ---
 
 ## scalarUI
 
-Returns a Hono handler that renders the [Scalar API Reference](https://scalar.com) UI.
+Returns a Hono handler that renders the
+[Scalar API Reference](https://scalar.com) UI.
 
 ```ts
 import { scalarUI } from "@serverx/server";
 
-app.addOpenApiUi("/scalar-docs", scalarUI({
-  spec: { url: "/api-docs" },
-  theme: "deepSpace",
-}));
+app.addOpenApiUi(
+  "/scalar-docs",
+  scalarUI({
+    spec: { url: "/api-docs" },
+    theme: "deepSpace",
+  }),
+);
 ```
 
-| Option | Type | Description |
-|---|---|---|
-| `spec.url` | `string` | URL of the OpenAPI JSON spec |
-| `theme` | `string` | UI colour theme (see below) |
-| `cdn` | `string` | Custom CDN URL for the Scalar bundle |
+| Option     | Type     | Description                          |
+| ---------- | -------- | ------------------------------------ |
+| `spec.url` | `string` | URL of the OpenAPI JSON spec         |
+| `theme`    | `string` | UI colour theme (see below)          |
+| `cdn`      | `string` | Custom CDN URL for the Scalar bundle |
 
-**Available themes:** `alternate`, `default`, `moon`, `purple`, `solarized`, `bluePlanet`, `deepSpace`, `saturn`, `kepler`, `mars`, `none`
+**Available themes:** `alternate`, `default`, `moon`, `purple`, `solarized`,
+`bluePlanet`, `deepSpace`, `saturn`, `kepler`, `mars`, `none`
 
 ---
 

@@ -1,6 +1,7 @@
 # Server
 
-`Server` is the top-level class that wraps [Hono](https://hono.dev) and orchestrates routers, middleware, OpenAPI, health checks, and MCP.
+`Server` is the top-level class that wraps [Hono](https://hono.dev) and
+orchestrates routers, middleware, OpenAPI, health checks, and MCP.
 
 ```ts
 import { Server } from "@serverx/server";
@@ -14,7 +15,8 @@ const app = new Server();
 
 ### `addMiddleware(fn)`
 
-Register a Hono-compatible middleware. Middleware is applied globally in registration order.
+Register a Hono-compatible middleware. Middleware is applied globally in
+registration order.
 
 ```ts
 import { cors, useLogger } from "@serverx/server";
@@ -29,7 +31,8 @@ See [[Middleware]] for built-in options.
 
 ### `addRouter(router)`
 
-Mount a [[Router-and-Actions|Router]] and register its actions and OpenAPI metadata.
+Mount a [[Router-and-Actions|Router]] and register its actions and OpenAPI
+metadata.
 
 ```ts
 import { Router } from "@serverx/server";
@@ -44,7 +47,8 @@ app.addRouter(userRouter);
 
 ### `addHealthCheck(action)`
 
-Register a health check action at `GET /healthcheck`. The action follows the same shape as any other action.
+Register a health check action at `GET /healthcheck`. The action follows the
+same shape as any other action.
 
 ```ts
 import { healthCheckHandler, healthCheckResponse } from "@serverx/server";
@@ -83,13 +87,17 @@ app.addOpenApi({
 
 ### `addOpenApiUi(path, handler)`
 
-Mount a documentation UI at the given path. Works with both `swaggerUI` and `scalarUI`.
+Mount a documentation UI at the given path. Works with both `swaggerUI` and
+`scalarUI`.
 
 ```ts
 import { scalarUI, swaggerUI } from "@serverx/server";
 
 app.addOpenApiUi("/swagger-docs", swaggerUI({ url: "/api-docs" }));
-app.addOpenApiUi("/scalar-docs", scalarUI({ spec: { url: "/api-docs" }, theme: "deepSpace" }));
+app.addOpenApiUi(
+  "/scalar-docs",
+  scalarUI({ spec: { url: "/api-docs" }, theme: "deepSpace" }),
+);
 ```
 
 ---
@@ -111,21 +119,22 @@ app.addMcpRouter(mcpRouter);
 
 ### `addMcp(options)`
 
-Mount the MCP Streamable HTTP endpoint. Must be called after all `addMcpRouter` calls.
+Mount the MCP Streamable HTTP endpoint. Must be called after all `addMcpRouter`
+calls.
 
 ```ts
 app.addMcp({
-  path: "/mcp",      // default: "/mcp"
+  path: "/mcp", // default: "/mcp"
   name: "my-api",
   version: "1.0.0",
 });
 ```
 
-| Option | Type | Required | Description |
-|---|---|---|---|
-| `name` | `string` | Yes | Server name reported to MCP clients |
-| `version` | `string` | Yes | Server version reported to MCP clients |
-| `path` | `string` | No | Mount path, defaults to `"/mcp"` |
+| Option    | Type     | Required | Description                            |
+| --------- | -------- | -------- | -------------------------------------- |
+| `name`    | `string` | Yes      | Server name reported to MCP clients    |
+| `version` | `string` | Yes      | Server version reported to MCP clients |
+| `path`    | `string` | No       | Mount path, defaults to `"/mcp"`       |
 
 ---
 
@@ -180,7 +189,11 @@ app.addHealthCheck({
   handler: () => healthCheckHandler(),
 });
 
-app.addOpenApi({ url: "/api-docs", openapi: "3.1.0", info: { version: "1.0.0", title: "My API" } });
+app.addOpenApi({
+  url: "/api-docs",
+  openapi: "3.1.0",
+  info: { version: "1.0.0", title: "My API" },
+});
 app.addOpenApiUi("/swagger-docs", swaggerUI({ url: "/api-docs" }));
 app.addOpenApiUi("/scalar-docs", scalarUI({ spec: { url: "/api-docs" } }));
 

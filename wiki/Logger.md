@@ -2,9 +2,12 @@
 
 ServerX uses a two-layer logging design:
 
-- **`Logger`** (from `@serverx/utils`) — a lightweight interface that any implementation can satisfy
-- **`PinoLogger`** (from `@serverx/server`) — the concrete [Pino](https://getpino.io)-based implementation
-- **`useLogger`** (from `@serverx/server`) — middleware that wires `PinoLogger` into the request lifecycle
+- **`Logger`** (from `@serverx/utils`) — a lightweight interface that any
+  implementation can satisfy
+- **`PinoLogger`** (from `@serverx/server`) — the concrete
+  [Pino](https://getpino.io)-based implementation
+- **`useLogger`** (from `@serverx/server`) — middleware that wires `PinoLogger`
+  into the request lifecycle
 
 ---
 
@@ -22,25 +25,27 @@ type LoggerConfig = {
 };
 
 type LoggerPayload = {
-  fields?: Record<string, unknown>;  // structured key-value data
-  args?: unknown[];                  // arbitrary extra values
+  fields?: Record<string, unknown>; // structured key-value data
+  args?: unknown[]; // arbitrary extra values
 };
 
 type Logger = {
   debug(message: string, payload?: LoggerPayload): void;
-  info (message: string, payload?: LoggerPayload): void;
-  warn (message: string, payload?: LoggerPayload): void;
+  info(message: string, payload?: LoggerPayload): void;
+  warn(message: string, payload?: LoggerPayload): void;
   error(message: string, payload?: LoggerPayload): void;
 };
 ```
 
-Depend on the interface — not the concrete class — to keep your business logic decoupled from the logging implementation.
+Depend on the interface — not the concrete class — to keep your business logic
+decoupled from the logging implementation.
 
 ---
 
 ## PinoLogger
 
-`PinoLogger` implements `Logger` using [Pino](https://getpino.io) for structured JSON output.
+`PinoLogger` implements `Logger` using [Pino](https://getpino.io) for structured
+JSON output.
 
 ```ts
 import { PinoLogger } from "@serverx/server";
@@ -70,12 +75,12 @@ Each call produces a structured JSON log line:
 
 ### Log levels
 
-| Level | Description |
-|---|---|
-| `debug` | Verbose development output |
-| `info` | Normal operational messages (default) |
-| `warn` | Unexpected but recoverable situations |
-| `error` | Errors that need attention |
+| Level   | Description                           |
+| ------- | ------------------------------------- |
+| `debug` | Verbose development output            |
+| `info`  | Normal operational messages (default) |
+| `warn`  | Unexpected but recoverable situations |
+| `error` | Errors that need attention            |
 
 Only messages at or above the configured level are emitted.
 
@@ -83,7 +88,8 @@ Only messages at or above the configured level are emitted.
 
 ## useLogger Middleware
 
-`useLogger` creates a `PinoLogger` and logs every incoming request automatically.
+`useLogger` creates a `PinoLogger` and logs every incoming request
+automatically.
 
 ```ts
 import { useLogger } from "@serverx/server";
@@ -119,7 +125,8 @@ deno task user-api | pino-pretty
 
 ## Using Logger in Business Logic
 
-Inject the `Logger` interface into your handlers or services to avoid coupling to Pino:
+Inject the `Logger` interface into your handlers or services to avoid coupling
+to Pino:
 
 ```ts
 import type { Logger } from "@serverx/utils";

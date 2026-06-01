@@ -94,6 +94,7 @@ deno run --allow-net=127.0.0.1:3100 main.ts
 ```
 
 Visit:
+
 - `http://127.0.0.1:3100/users/1` — JSON response
 - `http://127.0.0.1:3100/swagger-docs` — Swagger UI
 - `http://127.0.0.1:3100/api-docs` — Raw OpenAPI JSON
@@ -102,7 +103,8 @@ Visit:
 
 ## Running the Example App
 
-The repository includes a full CRUD user API in [`example/`](https://github.com/MihirJayavant/serverx/tree/main/example).
+The repository includes a full CRUD user API in
+[`example/`](https://github.com/MihirJayavant/serverx/tree/main/example).
 
 ```bash
 # Clone the repo

@@ -1,6 +1,8 @@
 # Base Handler
 
-`baseHandler` wraps your business logic with Zod input validation. If the schema fails, it returns a `400 Bad Request` automatically — the inner handler is never called.
+`baseHandler` wraps your business logic with Zod input validation. If the schema
+fails, it returns a `400 Bad Request` automatically — the inner handler is never
+called.
 
 ```ts
 import { baseHandler } from "@serverx/server";
@@ -37,7 +39,8 @@ const getUser = baseHandler({
 });
 ```
 
-The returned function has the same signature as the inner handler. Wire it into an action:
+The returned function has the same signature as the inner handler. Wire it into
+an action:
 
 ```ts
 router.addAction({
@@ -67,7 +70,8 @@ You do not need to handle this case in your inner handler.
 
 ## Without a Schema
 
-`validationSchema` is optional. Omitting it is useful when input is already typed and validated upstream:
+`validationSchema` is optional. Omitting it is useful when input is already
+typed and validated upstream:
 
 ```ts
 const deleteUser = baseHandler({
@@ -82,7 +86,8 @@ const deleteUser = baseHandler({
 
 ## Sharing Handlers Between HTTP and MCP
 
-`baseHandler` returns a plain function, so it can be imported by both an action and an MCP tool:
+`baseHandler` returns a plain function, so it can be imported by both an action
+and an MCP tool:
 
 ```ts
 // get-user.handler.ts
@@ -90,7 +95,9 @@ export const getUserHandler = baseHandler({
   validationSchema: z.object({ id: z.string().uuid() }),
   handler: async ({ id }) => {
     const user = await db.users.findById(id);
-    return user ? successResult(user) : errorResult("Not found", statusCodes.NotFound);
+    return user
+      ? successResult(user)
+      : errorResult("Not found", statusCodes.NotFound);
   },
 });
 ```

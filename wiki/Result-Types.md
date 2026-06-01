@@ -1,6 +1,8 @@
 # Result Types
 
-All handlers in ServerX return a `Result<T>` — a discriminated union of `SuccessResult<T>` and `ErrorResult`. The router serializes it into an HTTP response automatically; you never construct a `Response` object directly.
+All handlers in ServerX return a `Result<T>` — a discriminated union of
+`SuccessResult<T>` and `ErrorResult`. The router serializes it into an HTTP
+response automatically; you never construct a `Response` object directly.
 
 ```ts
 import {
@@ -24,12 +26,13 @@ type Result<T extends JsonType> = SuccessResult<T> | ErrorResult;
 
 ### SuccessResult&lt;T&gt;
 
-A success result is either contentful (200/201/202 with a body) or non-contentful (204/3xx with `null`).
+A success result is either contentful (200/201/202 with a body) or
+non-contentful (204/3xx with `null`).
 
 ```ts
 type ContentfulSuccessResult<T> = { status: 200 | 201 | 202; data: T };
-type NonContentfulSuccessResult  = { status: 204 | 301 | 302 | 304; data: null };
-type SuccessResult<T>            = ContentfulSuccessResult<T> | NonContentfulSuccessResult;
+type NonContentfulSuccessResult = { status: 204 | 301 | 302 | 304; data: null };
+type SuccessResult<T> = ContentfulSuccessResult<T> | NonContentfulSuccessResult;
 ```
 
 ### ErrorResult
@@ -50,13 +53,14 @@ type ErrorResult = {
 Create a success result. Defaults to `200`.
 
 ```ts
-successResult(user);                              // 200 with body
-successResult(user, statusCodes.Created);         // 201 with body
-successResult(null, statusCodes.NoContent);       // 204 no body
-successResult(null, statusCodes.Found);           // 302 redirect
+successResult(user); // 200 with body
+successResult(user, statusCodes.Created); // 201 with body
+successResult(null, statusCodes.NoContent); // 204 no body
+successResult(null, statusCodes.Found); // 302 redirect
 ```
 
-When `status` is `204` or a redirect code, `data` is always stored as `null` regardless of what you pass.
+When `status` is `204` or a redirect code, `data` is always stored as `null`
+regardless of what you pass.
 
 ---
 
@@ -65,9 +69,9 @@ When `status` is `204` or a redirect code, `data` is always stored as `null` reg
 Create an error result with a specific status code.
 
 ```ts
-errorResult("User not found", statusCodes.NotFound);         // 404
+errorResult("User not found", statusCodes.NotFound); // 404
 errorResult({ message: "Email taken" }, statusCodes.Conflict); // 409
-errorResult(zodError.issues, statusCodes.BadRequest);         // 400
+errorResult(zodError.issues, statusCodes.BadRequest); // 400
 ```
 
 ---
@@ -92,11 +96,11 @@ Type guards for narrowing a `Result<T>`:
 
 ```ts
 if (isSuccess(result)) {
-  console.log(result.data);   // T is accessible
+  console.log(result.data); // T is accessible
 }
 
 if (isError(result)) {
-  console.log(result.error);  // error is accessible
+  console.log(result.error); // error is accessible
 }
 ```
 
@@ -106,25 +110,25 @@ if (isError(result)) {
 
 `statusCodes` is a const object mapping readable names to numeric values.
 
-| Name | Value |
-|---|---|
-| `Ok` | 200 |
-| `Created` | 201 |
-| `Accepted` | 202 |
-| `NoContent` | 204 |
-| `MovedPermanently` | 301 |
-| `Found` | 302 |
-| `NotModified` | 304 |
-| `BadRequest` | 400 |
-| `Unauthorized` | 401 |
-| `Forbidden` | 403 |
-| `NotFound` | 404 |
-| `Conflict` | 409 |
-| `InternalServerError` | 500 |
-| `NotImplemented` | 501 |
-| `BadGateway` | 502 |
-| `ServiceUnavailable` | 503 |
-| `GatewayTimeout` | 504 |
+| Name                  | Value |
+| --------------------- | ----- |
+| `Ok`                  | 200   |
+| `Created`             | 201   |
+| `Accepted`            | 202   |
+| `NoContent`           | 204   |
+| `MovedPermanently`    | 301   |
+| `Found`               | 302   |
+| `NotModified`         | 304   |
+| `BadRequest`          | 400   |
+| `Unauthorized`        | 401   |
+| `Forbidden`           | 403   |
+| `NotFound`            | 404   |
+| `Conflict`            | 409   |
+| `InternalServerError` | 500   |
+| `NotImplemented`      | 501   |
+| `BadGateway`          | 502   |
+| `ServiceUnavailable`  | 503   |
+| `GatewayTimeout`      | 504   |
 
 ---
 

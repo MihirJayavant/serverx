@@ -331,7 +331,7 @@ const payload: JsonType = { count: 1, active: true, tags: ["a"] };
 ## Documentation
 
 Full docs and guides are available in the
-[ServerX Wiki](https://github.com/MihirJayavant/serverx/wiki/Utils).
+[ServerX Wiki](https://github.com/MihirJayavant/serverx/wiki).
 
 ## License
 

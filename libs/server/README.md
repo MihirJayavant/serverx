@@ -18,12 +18,25 @@ HTTP server, router, middleware, and MCP support built on
   [Model Context Protocol](https://modelcontextprotocol.io) support via
   Streamable HTTP
 - **Virtual Entity** — lifecycle abstraction for domain entities
+- **Cross-runtime** — runs natively on Deno and Node.js from the same codebase
 
 ## Installation
+
+Deno:
 
 ```bash
 deno add jsr:@serverx/server
 ```
+
+Node.js (via JSR's npm compatibility):
+
+```bash
+npx jsr add @serverx/server
+npm install @hono/node-server
+```
+
+`@hono/node-server` is a peer dependency used only by the Node.js entry point
+(`@serverx/server/node`).
 
 ## Quick Start
 
@@ -36,6 +49,7 @@ import {
   swaggerUI,
   useLogger,
 } from "@serverx/server";
+import { serve } from "@serverx/server/deno"; // or "@serverx/server/node"
 import { openApiParameter, openApiResponse, statusCodes } from "@serverx/utils";
 
 const router = new Router({ basePath: "/users" });
@@ -73,8 +87,29 @@ app.addOpenApiUi(
   "/scalar-docs",
   scalarUI({ spec: { url: "/api-docs" }, theme: "deepSpace" }),
 );
-app.serve({ port: 3100, hostname: "127.0.0.1" });
+serve(app, { port: 3100, hostname: "127.0.0.1" });
 ```
+
+## Runtime support
+
+The `Server` itself is runtime-agnostic — it exposes a universal `app.fetch`
+handler. Starting it is the only runtime-specific step, so the `serve` helper
+lives in a dedicated entry point per runtime:
+
+```ts
+// Deno
+import { serve } from "@serverx/server/deno";
+serve(app, { port: 3100, hostname: "127.0.0.1" });
+
+// Node.js
+import { serve } from "@serverx/server/node";
+serve(app, { port: 3100, hostname: "127.0.0.1" });
+```
+
+Everything else (`Server`, `Router`, middleware, MCP, health check) is imported
+from the root `@serverx/server` and works identically on both runtimes. You can
+also bind `app.fetch` to any other Web-standard host (Bun, Cloudflare Workers,
+etc.) directly.
 
 ## Server
 
@@ -82,6 +117,7 @@ app.serve({ port: 3100, hostname: "127.0.0.1" });
 
 ```ts
 import { Server } from "@serverx/server";
+import { serve } from "@serverx/server/deno"; // or "@serverx/server/node"
 
 const app = new Server();
 
@@ -93,7 +129,7 @@ app.addOpenApiUi("/swagger-docs", swaggerUI()); // Mount Swagger UI
 app.addOpenApiUi("/scalar-docs", scalarUI()); // Mount Scalar UI
 app.addMcpRouter(mcpRouter); // Register MCP tool router
 app.addMcp({ path: "/mcp", name: "my-api", version: "1.0.0" }); // Mount MCP endpoint
-app.serve({ port: 3100, hostname: "127.0.0.1" });
+serve(app, { port: 3100, hostname: "127.0.0.1" }); // Start the server
 ```
 
 ## Router & Actions
@@ -268,6 +304,16 @@ Response shape:
 ```
 
 Returns `200` when all dependencies pass, `500` if any fail.
+
+System metrics are gathered per runtime automatically (Deno APIs on Deno,
+`node:os` on Node.js). Override the `systemMetrics` provider to source them
+elsewhere or to make the check deterministic in tests:
+
+```ts
+healthCheckHandler({
+  systemMetrics: () => ({ cpuLoad: 0, freeMemory: 0, totalMemory: 0 }),
+});
+```
 
 ## MCP — Model Context Protocol
 

@@ -8,6 +8,10 @@ import {
   type Task,
 } from "@serverx/utils";
 import { baseHandler } from "../router/request-handler.ts";
+import {
+  defaultSystemMetricsProvider,
+  type SystemMetricsProvider,
+} from "./system-metrics.ts";
 import { z } from "@zod/zod";
 
 export type HealthCheckDependency = {
@@ -17,6 +21,11 @@ export type HealthCheckDependency = {
 
 export type HealthCheckOptions = {
   dependencies?: HealthCheckDependency[];
+  /**
+   * Override how system metrics are gathered. Defaults to a runtime-detecting
+   * provider that uses Deno APIs on Deno and `node:os` on Node.js.
+   */
+  systemMetrics?: SystemMetricsProvider;
 };
 
 export type HealthCheckResponse = {
@@ -45,13 +54,8 @@ async function handler(
     const results = await Promise.all(checks);
     const allHealthy = results.every((r) => r.healthy);
 
-    const memoryInfo = Deno.systemMemoryInfo();
-
-    const systemMetrics = {
-      cpuLoad: Deno.loadavg()[0], // 1-minute load average
-      freeMemory: memoryInfo.free,
-      totalMemory: memoryInfo.total,
-    };
+    const provider = options.systemMetrics ?? defaultSystemMetricsProvider;
+    const systemMetrics = await provider();
 
     const response = {
       timestamp: new Date().toISOString(),

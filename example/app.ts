@@ -1,4 +1,5 @@
 import { cors, scalarUI, Server, swaggerUI, useLogger } from "@serverx/server";
+import { serve } from "@serverx/server/deno";
 import { userRouter } from "./controllers/user.ts";
 import { userMcpRouter } from "./controllers/user-mcp.ts";
 import * as healthcheck from "./healthcheck.ts";
@@ -26,7 +27,7 @@ app.addOpenApi({
 app.addOpenApiUi("/swagger-docs", swaggerUI({ url: "/api-docs" }));
 app.addOpenApiUi("/scalar-docs", scalarUI({ spec: { url: "/api-docs" } }));
 
-app.serve({ port: 3100, hostname: "127.0.0.1" });
+serve(app, { port: 3100, hostname: "127.0.0.1" });
 
 logger.info("Swagger Docs: http://127.0.0.1:3100/swagger-docs");
 logger.info("Scalar Docs: http://127.0.0.1:3100/scalar-docs");

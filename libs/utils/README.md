@@ -16,10 +16,21 @@ A collection of utility functions, types, and helpers for building APIs with
 - **Logger** — lightweight logger interface with pluggable implementations
 - **Utility types** — `Prettify`, `StrictOmit`, `OptionalExcept`, and more
 
+Built entirely on Web-standard APIs, so it runs natively on both Deno and
+Node.js.
+
 ## Installation
+
+Deno:
 
 ```bash
 deno add jsr:@serverx/utils
+```
+
+Node.js (via JSR's npm compatibility):
+
+```bash
+npx jsr add @serverx/utils
 ```
 
 ## Result Types

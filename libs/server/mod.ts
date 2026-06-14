@@ -7,5 +7,6 @@ export * from "./middlewares/swagger.ts";
 export * from "./middlewares/scalar.ts";
 export * from "./middlewares/logger.ts";
 export * from "./handlers/healthcheck.ts";
+export * from "./handlers/system-metrics.ts";
 export * from "./logger/pino-logger.ts";
 export * from "./mcp/mod.ts";

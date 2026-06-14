@@ -12,6 +12,7 @@
     "jsr:@std/internal@^1.0.4": "1.0.4",
     "jsr:@std/path@^1.1.4": "1.1.4",
     "jsr:@std/testing@^1.0.17": "1.0.17",
+    "npm:@hono/node-server@^1.13.7": "1.19.14_hono@4.12.23",
     "npm:@modelcontextprotocol/inspector-cli@0.21.2": "0.21.2_zod@4.3.6",
     "npm:@modelcontextprotocol/inspector@0.21.2": "0.21.2_@types+node@24.2.0_typescript@6.0.3",
     "npm:@modelcontextprotocol/inspector@~0.21.2": "0.21.2_@types+node@24.2.0_typescript@6.0.3",
@@ -1994,6 +1995,7 @@
       "libs/server": {
         "dependencies": [
           "jsr:@hono/hono@^4.11.7",
+          "npm:@hono/node-server@^1.13.7",
           "npm:@modelcontextprotocol/sdk@^1.29.0"
         ]
       }

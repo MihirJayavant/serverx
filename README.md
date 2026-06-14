@@ -4,10 +4,10 @@
 [![JSR @serverx/utils](https://jsr.io/badges/@serverx/utils)](https://jsr.io/@serverx/utils)
 [![License](https://img.shields.io/badge/license-Apache%202.0-blue.svg)](LICENSE)
 
-A Deno framework for building type-safe REST APIs with automatic OpenAPI
+A framework for building type-safe REST APIs with automatic OpenAPI
 documentation and
 [Model Context Protocol (MCP)](https://modelcontextprotocol.io) support out of
-the box.
+the box. Runs natively on both Deno and Node.js.
 
 ## Packages
 
@@ -18,12 +18,22 @@ the box.
 
 ## Quick Start
 
+Deno:
+
 ```bash
 deno add jsr:@serverx/server jsr:@serverx/utils
 ```
 
+Node.js (via JSR's npm compatibility):
+
+```bash
+npx jsr add @serverx/server @serverx/utils
+npm install @hono/node-server
+```
+
 ```ts
 import { cors, Router, Server, swaggerUI, useLogger } from "@serverx/server";
+import { serve } from "@serverx/server/deno"; // or "@serverx/server/node"
 import {
   httpMethods,
   openApiParameter,
@@ -67,7 +77,7 @@ app.addOpenApi({
   info: { version: "1.0.0", title: "My API" },
 });
 app.addOpenApiUi("/swagger-docs", swaggerUI({ url: "/api-docs" }));
-app.serve({ port: 3100, hostname: "127.0.0.1" });
+serve(app, { port: 3100, hostname: "127.0.0.1" });
 ```
 
 ## Key Concepts

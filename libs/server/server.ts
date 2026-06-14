@@ -59,11 +59,12 @@ export class Server {
     this.#router.all(path, handler);
   }
 
-  serve(
-    options:
-      | Deno.ServeTcpOptions
-      | (Deno.ServeTcpOptions & Deno.TlsCertifiedKeyPem),
-  ) {
-    Deno.serve(options, this.#router.fetch);
+  /**
+   * The universal `fetch` handler for this server. Pass it to a
+   * runtime-specific adapter — `serve` from `@serverx/server/deno` or
+   * `serve` from `@serverx/server/node`.
+   */
+  get fetch(): Hono["fetch"] {
+    return this.#router.fetch;
   }
 }

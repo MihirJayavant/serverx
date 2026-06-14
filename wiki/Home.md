@@ -4,10 +4,10 @@
 [![JSR @serverx/utils](https://jsr.io/badges/@serverx/utils)](https://jsr.io/@serverx/utils)
 [![License](https://img.shields.io/badge/license-Apache%202.0-blue.svg)](https://github.com/MihirJayavant/serverx/blob/main/LICENSE)
 
-A Deno framework for building type-safe REST APIs with automatic OpenAPI
+A framework for building type-safe REST APIs with automatic OpenAPI
 documentation and
 [Model Context Protocol (MCP)](https://modelcontextprotocol.io) support out of
-the box.
+the box. Runs natively on both Deno and Node.js.
 
 ---
 
@@ -35,6 +35,7 @@ the box.
 - **Pagination** — offset and cursor helpers ready to plug into any database
 - **Health check** — built-in `/healthcheck` with dependency probing and system
   metrics
+- **Cross-runtime** — runs natively on Deno and Node.js from the same codebase
 
 ---
 
@@ -47,6 +48,7 @@ the box.
 ### @serverx/server
 
 - [[Server]] — Server class setup and configuration
+- [[Runtime-Support]] — Running on Deno and Node.js, per-runtime serve()
 - [[Router-and-Actions]] — Routing, Action pattern, ActionContext
 - [[Base-Handler]] — Zod-validated handler wrapper
 - [[Middleware]] — Logger, CORS, Swagger UI, Scalar UI

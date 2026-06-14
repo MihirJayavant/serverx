@@ -2,9 +2,14 @@
 
 ## Prerequisites
 
-- [Deno](https://deno.com) v2.0 or later
+- [Deno](https://deno.com) v2.0 or later, or [Node.js](https://nodejs.org) v18
+  or later
+
+ServerX runs natively on both runtimes — see [[Runtime-Support]].
 
 ## Installation
+
+### Deno
 
 Install both packages into your project:
 
@@ -19,6 +24,16 @@ deno add jsr:@serverx/server
 deno add jsr:@serverx/utils
 ```
 
+### Node.js
+
+Install via JSR's npm compatibility, plus the `@hono/node-server` peer
+dependency used by the Node.js entry point:
+
+```bash
+npx jsr add @serverx/server @serverx/utils
+npm install @hono/node-server
+```
+
 ---
 
 ## Your First Server
@@ -27,6 +42,7 @@ Create `main.ts`:
 
 ```ts
 import { cors, Router, Server, swaggerUI, useLogger } from "@serverx/server";
+import { serve } from "@serverx/server/deno"; // or "@serverx/server/node"
 import {
   errorResult,
   httpMethods,
@@ -84,13 +100,17 @@ app.addOpenApi({
   info: { version: "1.0.0", title: "My API" },
 });
 app.addOpenApiUi("/swagger-docs", swaggerUI({ url: "/api-docs" }));
-app.serve({ port: 3100, hostname: "127.0.0.1" });
+serve(app, { port: 3100, hostname: "127.0.0.1" });
 ```
 
 Run it:
 
 ```bash
+# Deno
 deno run --allow-net=127.0.0.1:3100 main.ts
+
+# Node.js (after transpiling, or with a TS runner such as tsx)
+node main.js
 ```
 
 Visit:

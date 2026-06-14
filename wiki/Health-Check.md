@@ -97,6 +97,18 @@ handler: () =>
 | `freeMemory`  | Free memory in MB         |
 | `totalMemory` | Total system memory in MB |
 
+Metrics are gathered per runtime automatically — `Deno` APIs on Deno and
+`node:os` on Node.js. Override the `systemMetrics` provider to source them
+elsewhere or to make the check deterministic in tests:
+
+```ts
+healthCheckHandler({
+  systemMetrics: () => ({ cpuLoad: 0, freeMemory: 0, totalMemory: 0 }),
+});
+```
+
+See [[Runtime-Support]] for details.
+
 ---
 
 ## OpenAPI Metadata
@@ -113,4 +125,5 @@ responses: healthCheckResponse(),
 ## Related
 
 - [[Server]] — `addHealthCheck()` method
+- [[Runtime-Support]] — overriding system metrics per runtime
 - [[Result-Types]] — the Result type returned by the handler

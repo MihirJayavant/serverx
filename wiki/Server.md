@@ -138,16 +138,21 @@ app.addMcp({
 
 ---
 
-### `serve(options)`
+### `serve(server, options)`
 
-Start the HTTP server. Accepts any `Deno.ServeTcpOptions` or TLS options.
+Start the HTTP server. `serve` is a standalone function imported from a
+runtime-specific entry point — `@serverx/server/deno` or `@serverx/server/node`.
+The `Server` itself stays runtime-agnostic and exposes a universal `app.fetch`
+handler. See [[Runtime-Support]] for details.
 
 ```ts
-// Plain HTTP
-app.serve({ port: 3100, hostname: "127.0.0.1" });
+import { serve } from "@serverx/server/deno"; // or "@serverx/server/node"
 
-// HTTPS
-app.serve({
+// Plain HTTP
+serve(app, { port: 3100, hostname: "127.0.0.1" });
+
+// HTTPS (Deno) — accepts any Deno.ServeTcpOptions or TLS options
+serve(app, {
   port: 443,
   hostname: "0.0.0.0",
   cert: Deno.readTextFileSync("cert.pem"),
@@ -171,6 +176,7 @@ import {
   swaggerUI,
   useLogger,
 } from "@serverx/server";
+import { serve } from "@serverx/server/deno"; // or "@serverx/server/node"
 import { httpMethods } from "@serverx/utils";
 
 const app = new Server();
@@ -200,13 +206,14 @@ app.addOpenApiUi("/scalar-docs", scalarUI({ spec: { url: "/api-docs" } }));
 app.addMcpRouter(mcpRouter);
 app.addMcp({ path: "/mcp", name: "my-api", version: "1.0.0" });
 
-app.serve({ port: 3100, hostname: "127.0.0.1" });
+serve(app, { port: 3100, hostname: "127.0.0.1" });
 ```
 
 ---
 
 ## Related
 
+- [[Runtime-Support]]
 - [[Router-and-Actions]]
 - [[Middleware]]
 - [[Health-Check]]

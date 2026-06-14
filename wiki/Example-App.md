@@ -116,8 +116,12 @@ app.addOpenApiUi("/swagger-docs", swaggerUI({ url: "/api-docs" }));
 app.addOpenApiUi("/scalar-docs", scalarUI({ spec: { url: "/api-docs" } }));
 app.addMcp({ path: "/mcp", name: "serverx-example", version: "1.0.0" });
 
-app.serve({ port: 3100, hostname: "127.0.0.1" });
+serve(app, { port: 3100, hostname: "127.0.0.1" });
 ```
+
+The example runs on Deno and imports `serve` from `@serverx/server/deno`. To run
+it on Node.js, import from `@serverx/server/node` instead — see
+[[Runtime-Support]].
 
 ### `example/user/get-user.handler.ts`
 

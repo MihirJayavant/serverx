@@ -141,9 +141,9 @@ app.addMcp({
 ### `serve(server, options)`
 
 Start the HTTP server. `serve` is a standalone function imported from a
-runtime-specific entry point — `@serverx/server/deno` or
-`@serverx/server/node`. The `Server` itself stays runtime-agnostic and exposes a
-universal `app.fetch` handler. See [[Runtime-Support]] for details.
+runtime-specific entry point — `@serverx/server/deno` or `@serverx/server/node`.
+The `Server` itself stays runtime-agnostic and exposes a universal `app.fetch`
+handler. See [[Runtime-Support]] for details.
 
 ```ts
 import { serve } from "@serverx/server/deno"; // or "@serverx/server/node"

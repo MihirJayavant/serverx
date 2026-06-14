@@ -63,7 +63,9 @@ the server's `fetch` handler. Accepts any `Deno.ServeTcpOptions` or TLS options.
 ```ts
 function serve(
   server: Server,
-  options: Deno.ServeTcpOptions | (Deno.ServeTcpOptions & Deno.TlsCertifiedKeyPem),
+  options:
+    | Deno.ServeTcpOptions
+    | (Deno.ServeTcpOptions & Deno.TlsCertifiedKeyPem),
 ): Deno.HttpServer<Deno.NetAddr>;
 ```
 

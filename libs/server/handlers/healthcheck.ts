@@ -14,12 +14,17 @@ import {
 } from "./system-metrics.ts";
 import { z } from "@zod/zod";
 
+/** A named dependency probed during a health check. */
 export type HealthCheckDependency = {
+  /** Identifier for the dependency in the health response. */
   name: string;
+  /** Returns `true` when the dependency is healthy. */
   check: () => Promise<boolean>;
 };
 
+/** Options controlling {@link healthCheckHandler}. */
 export type HealthCheckOptions = {
+  /** Dependencies to probe; all must pass for an overall healthy status. */
   dependencies?: HealthCheckDependency[];
   /**
    * Override how system metrics are gathered. Defaults to a runtime-detecting
@@ -28,13 +33,18 @@ export type HealthCheckOptions = {
   systemMetrics?: SystemMetricsProvider;
 };
 
+/** Payload returned by the health check endpoint. */
 export type HealthCheckResponse = {
+  /** Overall status, `"healthy"` or `"unhealthy"`. */
   status: string;
+  /** ISO timestamp of when the check ran. */
   timestamp: string;
+  /** Per-dependency results. */
   checks: {
     name: string;
     healthy: boolean;
   }[];
+  /** Snapshot of system resource usage. */
   systemMetrics: {
     cpuLoad: number;
     freeMemory: number;
@@ -83,6 +93,11 @@ async function handler(
   }
 }
 
+/**
+ * Run the health check: probe every configured dependency and gather system
+ * metrics. Returns a success {@link Result} when all dependencies are healthy,
+ * otherwise an error result with `500 Internal Server Error`.
+ */
 export function healthCheckHandler(
   options: HealthCheckOptions = {},
 ): Task<Result<HealthCheckResponse>> {
@@ -93,6 +108,10 @@ export function healthCheckHandler(
   return h(undefined);
 }
 
+/**
+ * Build the OpenAPI `responses` metadata for the health check endpoint,
+ * describing both the `200` healthy and `500` unhealthy payloads.
+ */
 export function healthCheckResponse(): OpenApiResponse {
   return openApiResponse({
     status: 200,

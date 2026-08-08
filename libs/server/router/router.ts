@@ -19,22 +19,45 @@ type Config = {
   basePath?: string;
 };
 
+/**
+ * Request context passed to an {@link Action} handler.
+ *
+ * @typeParam TBody - Shape of the lazily-parsed JSON request body.
+ * @typeParam TQuery - Shape of the parsed query parameters.
+ * @typeParam TParam - Shape of the parsed path parameters.
+ */
 export type ActionContext<TBody = unknown, TQuery = unknown, TParam = unknown> =
   {
+    /** Lazily parse and return the JSON request body. */
     body: () => Promise<TBody>;
+    /** Parsed query parameters. */
     query: TQuery;
+    /** Parsed path parameters. */
     params: TParam;
+    /** Underlying Hono context for the request. */
     context: Context;
   };
 
+/** {@link ActionContext} specialized to a typed request body. */
 export type ActionBodyContext<TBody> = ActionContext<TBody>;
+/** {@link ActionContext} specialized to typed query parameters. */
 export type ActionQueryContext<TQuery> = ActionContext<unknown, TQuery>;
+/** {@link ActionContext} specialized to typed path parameters. */
 export type ActionParamContext<TParam> = ActionContext<
   unknown,
   unknown,
   TParam
 >;
 
+/**
+ * A route definition combining a request {@link ActionContext} handler with
+ * its OpenAPI metadata. `path` and `method` are required; the remaining
+ * OpenAPI fields (`tags`, `description`, `parameters`, `responses`) are
+ * optional.
+ *
+ * @typeParam TResult - The success payload returned by the handler's
+ * {@link Result}.
+ */
 export type Action<TResult extends JsonType> = Prettify<
   {
     // deno-lint-ignore no-explicit-any
@@ -42,10 +65,19 @@ export type Action<TResult extends JsonType> = Prettify<
   } & OptionalExcept<ApiDocs, "path" | "method">
 >;
 
+/**
+ * Groups {@link Action}s into a Hono router and builds the matching OpenAPI
+ * documentation. Routers can be nested via {@link Router.addSubRouter} and
+ * mounted on a {@link Server} with `addRouter`.
+ */
 export class Router {
   readonly #router;
   readonly #apiDocs: OpenApi = new OpenApi();
 
+  /**
+   * @param config - Optional configuration; `basePath` prefixes every route
+   * registered on this router.
+   */
   constructor(private config?: Config) {
     if (config?.basePath) {
       this.#router = new Hono().basePath(config.basePath);
@@ -54,14 +86,17 @@ export class Router {
     }
   }
 
+  /** The underlying Hono instance backing this router. */
   get nativeRouter(): Hono {
     return this.#router;
   }
 
+  /** The {@link OpenApi} document accumulated from registered actions. */
   get nativeApiDocs(): OpenApi {
     return this.#apiDocs;
   }
 
+  /** Nest another {@link Router}, merging its routes and OpenAPI metadata. */
   addSubRouter(router: Router) {
     this.#router.route("/", router.#router);
     this.#apiDocs.addSubOpenApi({
@@ -71,6 +106,10 @@ export class Router {
     });
   }
 
+  /**
+   * Register an {@link Action}: wire its HTTP route handler and add its
+   * OpenAPI metadata to the document.
+   */
   addAction<T extends JsonType>(action: Action<T>) {
     const method = this.getMethod(action.method);
     method(action.path, this.actionHandler(action.handler));
@@ -125,6 +164,7 @@ export class Router {
     };
   }
 
+  /** Register a middleware applied to every route on this router. */
   addMiddleware(
     fn: (context: Context, next: Next) => Promise<void | Response>,
   ) {

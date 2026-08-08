@@ -4,8 +4,11 @@ import type { Context } from "@hono/hono";
 import type { McpRouter } from "./mcp-router.ts";
 import { resultToMcp } from "./result-adapter.ts";
 
+/** Identity reported by the MCP server to connecting clients. */
 export type McpServerOptions = {
+  /** Server name advertised to MCP clients. */
   name: string;
+  /** Server version advertised to MCP clients. */
   version: string;
 };
 
@@ -35,6 +38,11 @@ function buildServer(
   return mcp;
 }
 
+/**
+ * Build a stateless request handler that serves the given {@link McpRouter}s
+ * over a Streamable HTTP MCP transport. A fresh server and transport are
+ * created per request and torn down once the response is produced.
+ */
 export function createMcpHandler(
   routers: readonly McpRouter[],
   options: McpServerOptions,

@@ -93,3 +93,20 @@ Narrative docs live in `wiki/` (see `wiki/Home.md`); run
   `parameters`, and `responses`.
 - **HTTP and MCP must share the same handler.** Both `*.action.ts` and
   `*.mcp.ts` import the same `*.handler.ts`.
+
+## Working style
+
+- **Prefer tools over shell.** Read/Edit/Write/Grep/Glob for files and searches.
+  Reach for the terminal only when a command is genuinely the right tool (deno
+  tasks, git, package managers).
+- **Write commands a developer would actually type.** Short and readable —
+  `deno test libs/utils`, `git log --oneline -10`. No long `find ... -exec`
+  chains, no multi-line `awk`/`sed` pipelines, no inline scripts to inspect
+  files.
+- **One command, one purpose.** Don't chain five things with `&&` to save a
+  round trip; run them as separate steps so output stays readable and failures
+  are obvious.
+- **Use tools like a human would**: Humans don't write big commands with pipe
+  and chaining to figure things out, they read files and write small specific
+  command, read that command and do next thing. So work like a human that follow
+  step by step which are small and reason about it.

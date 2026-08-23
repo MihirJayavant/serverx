@@ -3,7 +3,8 @@
   "license": "Apache-2.0",
   "tasks": {
     "user-api": "deno run --allow-net=127.0.0.1:3100 --allow-env --allow-sys=\"systemMemoryInfo,loadavg,hostname\" --watch ./example/app.ts",
-    "util-docs": "deno doc --html --name=\"@server/utils\" ./libs/utils/mod.ts",
+    "util-docs": "deno doc --html --name=\"@serverx/utils\" --output=./docs/utils ./libs/utils/mod.ts",
+    "server-docs": "deno doc --html --name=\"@serverx/server\" --output=./docs/server ./libs/server/mod.ts ./libs/server/deno.ts ./libs/server/node.ts",
     "test:api": "deno test example/**/*.spec.ts --allow-net=127.0.0.1:3100",
     "mcp-inspect": "deno run -A --node-modules-dir=auto npm:@modelcontextprotocol/inspector@^0.21.2",
     "mcp-inspect:list": "deno run -A --node-modules-dir=auto npm:@modelcontextprotocol/inspector@^0.21.2 --cli http://127.0.0.1:3100/mcp --transport http --method tools/list"

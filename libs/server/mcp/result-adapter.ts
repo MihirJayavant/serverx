@@ -1,3 +1,8 @@
+/**
+ * @file result-adapter.ts
+ * Converts handler results into MCP tool call responses
+ */
+
 import { isSuccess, type JsonType, type Result } from "@serverx/utils";
 
 /** MCP `tools/call` response shape returned by a tool handler. */
@@ -12,6 +17,18 @@ export type McpToolCallResult = {
  * Adapt a {@link Result} into an {@link McpToolCallResult}. Success payloads
  * are JSON-serialized (a `null` payload becomes an empty string); errors are
  * returned as text content with `isError` set.
+ *
+ * Applied automatically to every tool handler by {@link createMcpHandler} —
+ * call it directly only when driving a tool outside the transport.
+ *
+ * @example
+ * ```ts
+ * resultToMcp(successResult({ id: "1" }));
+ * // { content: [{ type: "text", text: '{"id":"1"}' }] }
+ *
+ * resultToMcp(errorResult("Not found", statusCodes.NotFound));
+ * // { content: [{ type: "text", text: "Not found" }], isError: true }
+ * ```
  */
 export function resultToMcp<T extends JsonType>(
   result: Result<T>,

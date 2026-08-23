@@ -1,3 +1,8 @@
+/**
+ * @file server.ts
+ * Top-level server that aggregates routers, docs, middlewares, and MCP tools
+ */
+
 import { Hono } from "@hono/hono";
 import type { Context, Next } from "@hono/hono";
 import { type Action, Router } from "./router/router.ts";
@@ -21,6 +26,24 @@ export type McpMountOptions = McpServerOptions & {
  * Top-level HTTP server. Aggregates {@link Router}s, OpenAPI documentation,
  * middlewares, health checks, and MCP tool routers, then exposes a universal
  * {@link Server.fetch} handler to be bound to a runtime adapter.
+ *
+ * @example
+ * ```ts
+ * import { Server, swaggerUI, useLogger } from "@serverx/server";
+ * import { serve } from "@serverx/server/deno";
+ *
+ * const app = new Server();
+ * app.addMiddleware(useLogger());
+ * app.addRouter(userRouter);
+ * app.addOpenApi({
+ *   url: "/api-docs",
+ *   openapi: "3.0.0",
+ *   info: { title: "User API", version: "1.0.0" },
+ * });
+ * app.addOpenApiUi("/swagger", swaggerUI());
+ *
+ * serve(app, { port: 3100 });
+ * ```
  */
 export class Server {
   #router = new Hono();
@@ -65,7 +88,23 @@ export class Server {
     this.#router.use(fn);
   }
 
-  /** Register a health check {@link Action} as a route on the server. */
+  /**
+   * Register a health check {@link Action} as a route on the server.
+   *
+   * @example
+   * ```ts
+   * app.addHealthCheck({
+   *   path: "/health",
+   *   method: "GET",
+   *   tags: ["health"],
+   *   description: "Service health",
+   *   responses: healthCheckResponse(),
+   *   handler: () => healthCheckHandler({
+   *     dependencies: [{ name: "db", check: () => db.ping() }],
+   *   }),
+   * });
+   * ```
+   */
   addHealthCheck<T extends HealthCheckResponse>(action: Action<T>) {
     const health = new Router();
     health.addAction(action);
@@ -83,6 +122,16 @@ export class Server {
   /**
    * Mount the MCP (Streamable HTTP, stateless) transport, exposing every tool
    * from the routers registered via {@link Server.addMcpRouter}.
+   *
+   * Call this after every {@link McpRouter} has been added — the tool list is
+   * captured when a request arrives, so routers registered later are picked up,
+   * but the mount path is fixed here.
+   *
+   * @example
+   * ```ts
+   * app.addMcpRouter(userMcpRouter);
+   * app.addMcp({ name: "user-api", version: "1.0.0" }); // mounted at /mcp
+   * ```
    */
   addMcp(options: McpMountOptions) {
     const path = options.path ?? "/mcp";

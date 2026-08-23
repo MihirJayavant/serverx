@@ -1,3 +1,8 @@
+/**
+ * @file pino-logger.ts
+ * Pino-backed implementation of the Logger interface
+ */
+
 import pino from "@pino/pino";
 import type {
   Logger,
@@ -7,7 +12,19 @@ import type {
 } from "@serverx/utils";
 
 /**
- * Pino-based logger implementation
+ * Pino-backed {@link Logger}. Each method takes a message plus an optional
+ * payload whose `fields` are merged into the structured log entry and whose
+ * `args` fill the message's format placeholders.
+ *
+ * @example
+ * ```ts
+ * const logger = new PinoLogger({ level: "debug" });
+ *
+ * logger.info("User %s created", {
+ *   args: [user.id],
+ *   fields: { userId: user.id },
+ * });
+ * ```
  */
 export class PinoLogger implements Logger {
   #pinoInstance: ReturnType<typeof pino>;

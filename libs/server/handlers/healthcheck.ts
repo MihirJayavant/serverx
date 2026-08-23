@@ -1,3 +1,8 @@
+/**
+ * @file healthcheck.ts
+ * Health check handler probing dependencies and system metrics
+ */
+
 import {
   errorResult,
   type OpenApiResponse,
@@ -97,6 +102,22 @@ async function handler(
  * Run the health check: probe every configured dependency and gather system
  * metrics. Returns a success {@link Result} when all dependencies are healthy,
  * otherwise an error result with `500 Internal Server Error`.
+ *
+ * Dependencies are probed in parallel and a single failing probe makes the
+ * whole check `"unhealthy"`. If a probe throws, the error result carries
+ * `status`, `timestamp`, and `error` instead of the usual checks and metrics.
+ *
+ * @param options - Dependencies to probe and an optional metrics provider.
+ *
+ * @example
+ * ```ts
+ * const result = await healthCheckHandler({
+ *   dependencies: [
+ *     { name: "db", check: () => db.ping() },
+ *     { name: "cache", check: () => cache.ping() },
+ *   ],
+ * });
+ * ```
  */
 export function healthCheckHandler(
   options: HealthCheckOptions = {},
@@ -111,6 +132,16 @@ export function healthCheckHandler(
 /**
  * Build the OpenAPI `responses` metadata for the health check endpoint,
  * describing both the `200` healthy and `500` unhealthy payloads.
+ *
+ * @example
+ * ```ts
+ * app.addHealthCheck({
+ *   path: "/health",
+ *   method: "GET",
+ *   responses: healthCheckResponse(),
+ *   handler: () => healthCheckHandler(),
+ * });
+ * ```
  */
 export function healthCheckResponse(): OpenApiResponse {
   return openApiResponse({

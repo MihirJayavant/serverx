@@ -1,3 +1,8 @@
+/**
+ * @file request-handler.ts
+ * Wraps business-logic handlers with Zod input validation
+ */
+
 import {
   errorResult,
   type JsonType,
@@ -34,6 +39,26 @@ export type BaseHandlerOption<Input, Output extends JsonType> = {
  * Wrap a {@link RequestHandler} with optional Zod validation. When the schema
  * rejects the input, returns a `400 Bad Request` {@link Result} with the
  * formatted validation error; otherwise delegates to the handler.
+ *
+ * The returned function is what an {@link Action} handler calls, so both the
+ * HTTP action and the matching MCP tool share one validated handler.
+ *
+ * @param option - The handler to wrap and the schema validating its input.
+ *
+ * @example
+ * ```ts
+ * const schema = z.object({ id: z.string() });
+ *
+ * export const getUserHandler = baseHandler({
+ *   validationSchema: schema,
+ *   handler: async ({ id }: z.infer<typeof schema>) => {
+ *     const user = await repository.findById(id);
+ *     return user
+ *       ? successResult(user)
+ *       : errorResult("User not found", statusCodes.NotFound);
+ *   },
+ * });
+ * ```
  */
 export function baseHandler<Input, Output extends JsonType>(
   option: BaseHandlerOption<Input, Output>,

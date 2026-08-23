@@ -1,3 +1,8 @@
+/**
+ * @file router.ts
+ * Groups actions into a route tree and builds their OpenAPI documentation
+ */
+
 import { Hono } from "@hono/hono";
 import type { Context, Next } from "@hono/hono";
 import type {
@@ -57,6 +62,19 @@ export type ActionParamContext<TParam> = ActionContext<
  *
  * @typeParam TResult - The success payload returned by the handler's
  * {@link Result}.
+ *
+ * @example
+ * ```ts
+ * const getUserAction: Action<User> = {
+ *   path: "/:id",
+ *   method: "GET",
+ *   tags: ["user"],
+ *   description: "Fetch a user by id",
+ *   parameters: openApiParameter({ name: "id", in: "path", type: "string" }),
+ *   responses: openApiResponse({ status: 200, description: "User", schema }),
+ *   handler: ({ params }) => getUserHandler({ id: params.id }),
+ * };
+ * ```
  */
 export type Action<TResult extends JsonType> = Prettify<
   {
@@ -69,6 +87,15 @@ export type Action<TResult extends JsonType> = Prettify<
  * Groups {@link Action}s into a Hono router and builds the matching OpenAPI
  * documentation. Routers can be nested via {@link Router.addSubRouter} and
  * mounted on a {@link Server} with `addRouter`.
+ *
+ * @example
+ * ```ts
+ * const userRouter = new Router({ basePath: "/users" });
+ * userRouter.addAction(getUserAction);   // GET /users/:id
+ * userRouter.addAction(createUserAction); // POST /users
+ *
+ * app.addRouter(userRouter);
+ * ```
  */
 export class Router {
   readonly #router;
@@ -109,6 +136,11 @@ export class Router {
   /**
    * Register an {@link Action}: wire its HTTP route handler and add its
    * OpenAPI metadata to the document.
+   *
+   * The handler's {@link Result} is mapped onto the response automatically —
+   * `204` and `3xx` results send an empty body, other success results send
+   * `data` as JSON, and error results send `{ error }` with the result's
+   * status. A thrown error is caught and returned as `500`.
    */
   addAction<T extends JsonType>(action: Action<T>) {
     const method = this.getMethod(action.method);

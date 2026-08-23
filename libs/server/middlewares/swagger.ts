@@ -5,6 +5,15 @@ import { swaggerUIGen, type SwaggerUIOptions } from "@serverx/utils";
  * Build a handler that renders the Swagger UI. Pass it to
  * `Server.addOpenApiUi` to mount the docs page. `options.url` points to the
  * OpenAPI JSON document (defaults to `/api-docs`).
+ *
+ * @param options - Swagger UI options; `url` is the OpenAPI JSON endpoint
+ * previously mounted with `Server.addOpenApi`.
+ *
+ * @example
+ * ```ts
+ * app.addOpenApi({ url: "/api-docs", openapi: "3.0.0", info });
+ * app.addOpenApiUi("/swagger", swaggerUI({ url: "/api-docs" }));
+ * ```
  */
 export function swaggerUI(
   options: SwaggerUIOptions = { url: "/api-docs" },

@@ -1,3 +1,8 @@
+/**
+ * @module Deno
+ * Deno runtime adapter — binds a {@link Server} to `Deno.serve`
+ */
+
 import type { Server } from "./server.ts";
 
 /**
@@ -6,6 +11,9 @@ import type { Server } from "./server.ts";
  * Thin wrapper over {@link Deno.serve} that binds the server's universal
  * `fetch` handler. For Node.js, import `serve` from `@serverx/server/node`
  * instead.
+ *
+ * @param server - The configured {@link Server} to serve.
+ * @param options - Deno serve options, optionally including a TLS key pair.
  *
  * ```ts
  * import { Server } from "@serverx/server";

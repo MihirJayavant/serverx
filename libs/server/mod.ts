@@ -1,3 +1,8 @@
+/**
+ * @module Server
+ * HTTP server, router, middlewares, health checks, and MCP tooling
+ */
+
 export * from "./server.ts";
 export * from "./virtual-entity.ts";
 export * from "./middlewares/cors.ts";

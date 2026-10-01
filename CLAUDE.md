@@ -53,74 +53,19 @@ example app:
 - `example/` — Full CRUD user API demonstrating **Vertical Slice Architecture
   (VSA)**
 
-### Action pattern (`@serverx/server`)
+### API reference — use the skills
 
-An _Action_ is a plain TypeScript module whose named exports define a route.
-`Router.addAction()` wires both the HTTP handler and OpenAPI metadata.
+The API surface, type constraints, and gotchas for each area live in skills, so
+they load only when relevant. Consult them before writing code:
 
-Required exports:
+| Working on                                                           | Skill            |
+| -------------------------------------------------------------------- | ---------------- |
+| `libs/server/`, routes, actions, middlewares, MCP tools              | `serverx-server` |
+| `libs/utils/`, `Result<T>`, OpenAPI helpers, pagination, HTTP client | `serverx-utils`  |
+| `example/` slices, handler/action/mcp conventions                    | `serverx-app`    |
 
-```ts
-export const path = "/:userId";
-export const method = httpMethods.GET;
-export function handler({ params, body, query, context }: ActionContext) { ... }
-```
-
-Optional OpenAPI exports: `tags`, `description`, `parameters`, `responses`.
-
-### Business logic layer (`baseHandler`)
-
-Handlers in `example/user/*.handler.ts` apply Zod validation then return
-`Result<T>`:
-
-```ts
-export const getUser = baseHandler({
-  handler: (input: Input) => {/* returns Result<T> */},
-  validationSchema: z.object({ id: z.number() }),
-});
-```
-
-Actions in `example/controllers/user/` adapt `ActionContext` into the handler's
-typed input.
-
-### Result type (`@serverx/utils`)
-
-All handlers return `Result<T>`. Use the constructors — never construct raw
-objects:
-
-```ts
-successResult(data); // 200
-successResult(data, statusCodes.Created); // 201
-successResult(null, statusCodes.NoContent); // 204
-errorResult("User not found", statusCodes.NotFound);
-```
-
-### MCP tool actions
-
-Each `*.action.ts` has a sibling `*.mcp.ts` that imports the same
-`*.handler.ts`. Required exports:
-
-```ts
-export const name = "get_user"; // snake_case
-export const description = "...";
-export const inputSchema = { // raw shape, NOT z.object()
-  userId: z.number().int().min(1),
-};
-export const annotations = { readOnlyHint: true }; // optional
-export function handler(input: { userId: number }) {
-  return getUserHandler({ id: input.userId });
-}
-```
-
-Aggregate tools in `example/controllers/<feature>-mcp.ts` with `McpRouter`,
-register via `app.addMcpRouter(...)`. MCP transport is mounted with
-`app.addMcp({ path: "/mcp", name, version })` — Streamable HTTP, stateless.
-
-### Logger
-
-`libs/utils/logger.ts` defines the `Logger` interface;
-`libs/server/logger/pino-logger.ts` provides `PinoLogger`. The `useLogger()`
-middleware wires it into Hono's request lifecycle.
+Narrative docs live in `wiki/` (see `wiki/Home.md`); run
+`deno doc libs/<package>/mod.ts` for exact signatures.
 
 ### Adding a new vertical slice
 
@@ -148,3 +93,20 @@ middleware wires it into Hono's request lifecycle.
   `parameters`, and `responses`.
 - **HTTP and MCP must share the same handler.** Both `*.action.ts` and
   `*.mcp.ts` import the same `*.handler.ts`.
+
+## Working style
+
+- **Prefer tools over shell.** Read/Edit/Write/Grep/Glob for files and searches.
+  Reach for the terminal only when a command is genuinely the right tool (deno
+  tasks, git, package managers).
+- **Write commands a developer would actually type.** Short and readable —
+  `deno test libs/utils`, `git log --oneline -10`. No long `find ... -exec`
+  chains, no multi-line `awk`/`sed` pipelines, no inline scripts to inspect
+  files.
+- **One command, one purpose.** Don't chain five things with `&&` to save a
+  round trip; run them as separate steps so output stays readable and failures
+  are obvious.
+- **Use tools like a human would**: Humans don't write big commands with pipe
+  and chaining to figure things out, they read files and write small specific
+  command, read that command and do next thing. So work like a human that follow
+  step by step which are small and reason about it.

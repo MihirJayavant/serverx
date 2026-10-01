@@ -1,4 +1,9 @@
 /**
+ * @file system-metrics.ts
+ * Runtime-neutral system metrics for the health check
+ */
+
+/**
  * System metrics reported by the health check, captured in a runtime-neutral
  * shape so the same handler works on Deno and Node.js.
  */
@@ -14,6 +19,17 @@ export type SystemMetrics = {
 /**
  * Supplies {@link SystemMetrics}. Override the default to source metrics from a
  * custom location or to make the health check deterministic in tests.
+ *
+ * @example
+ * ```ts
+ * const fixedMetrics: SystemMetricsProvider = () => ({
+ *   cpuLoad: 0,
+ *   freeMemory: 1_000,
+ *   totalMemory: 2_000,
+ * });
+ *
+ * await healthCheckHandler({ systemMetrics: fixedMetrics });
+ * ```
  */
 export type SystemMetricsProvider = () =>
   | SystemMetrics
@@ -22,6 +38,10 @@ export type SystemMetricsProvider = () =>
 /**
  * Default provider. Uses {@link Deno} APIs when running on Deno and falls back
  * to `node:os` on Node.js.
+ *
+ * On Deno this needs the `systemMemoryInfo` and `loadavg` system permissions —
+ * run with `--allow-sys="systemMemoryInfo,loadavg"` or pass a custom
+ * {@link SystemMetricsProvider} instead.
  */
 export const defaultSystemMetricsProvider: SystemMetricsProvider = async () => {
   if (

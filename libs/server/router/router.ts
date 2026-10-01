@@ -1,3 +1,8 @@
+/**
+ * @file router.ts
+ * Groups actions into a route tree and builds their OpenAPI documentation
+ */
+
 import { Hono } from "@hono/hono";
 import type { Context, Next } from "@hono/hono";
 import type {
@@ -19,22 +24,58 @@ type Config = {
   basePath?: string;
 };
 
+/**
+ * Request context passed to an {@link Action} handler.
+ *
+ * @typeParam TBody - Shape of the lazily-parsed JSON request body.
+ * @typeParam TQuery - Shape of the parsed query parameters.
+ * @typeParam TParam - Shape of the parsed path parameters.
+ */
 export type ActionContext<TBody = unknown, TQuery = unknown, TParam = unknown> =
   {
+    /** Lazily parse and return the JSON request body. */
     body: () => Promise<TBody>;
+    /** Parsed query parameters. */
     query: TQuery;
+    /** Parsed path parameters. */
     params: TParam;
+    /** Underlying Hono context for the request. */
     context: Context;
   };
 
+/** {@link ActionContext} specialized to a typed request body. */
 export type ActionBodyContext<TBody> = ActionContext<TBody>;
+/** {@link ActionContext} specialized to typed query parameters. */
 export type ActionQueryContext<TQuery> = ActionContext<unknown, TQuery>;
+/** {@link ActionContext} specialized to typed path parameters. */
 export type ActionParamContext<TParam> = ActionContext<
   unknown,
   unknown,
   TParam
 >;
 
+/**
+ * A route definition combining a request {@link ActionContext} handler with
+ * its OpenAPI metadata. `path` and `method` are required; the remaining
+ * OpenAPI fields (`tags`, `description`, `parameters`, `responses`) are
+ * optional.
+ *
+ * @typeParam TResult - The success payload returned by the handler's
+ * {@link Result}.
+ *
+ * @example
+ * ```ts
+ * const getUserAction: Action<User> = {
+ *   path: "/:id",
+ *   method: "GET",
+ *   tags: ["user"],
+ *   description: "Fetch a user by id",
+ *   parameters: openApiParameter({ name: "id", in: "path", type: "string" }),
+ *   responses: openApiResponse({ status: 200, description: "User", schema }),
+ *   handler: ({ params }) => getUserHandler({ id: params.id }),
+ * };
+ * ```
+ */
 export type Action<TResult extends JsonType> = Prettify<
   {
     // deno-lint-ignore no-explicit-any
@@ -42,10 +83,28 @@ export type Action<TResult extends JsonType> = Prettify<
   } & OptionalExcept<ApiDocs, "path" | "method">
 >;
 
+/**
+ * Groups {@link Action}s into a Hono router and builds the matching OpenAPI
+ * documentation. Routers can be nested via {@link Router.addSubRouter} and
+ * mounted on a {@link Server} with `addRouter`.
+ *
+ * @example
+ * ```ts
+ * const userRouter = new Router({ basePath: "/users" });
+ * userRouter.addAction(getUserAction);   // GET /users/:id
+ * userRouter.addAction(createUserAction); // POST /users
+ *
+ * app.addRouter(userRouter);
+ * ```
+ */
 export class Router {
   readonly #router;
   readonly #apiDocs: OpenApi = new OpenApi();
 
+  /**
+   * @param config - Optional configuration; `basePath` prefixes every route
+   * registered on this router.
+   */
   constructor(private config?: Config) {
     if (config?.basePath) {
       this.#router = new Hono().basePath(config.basePath);
@@ -54,14 +113,17 @@ export class Router {
     }
   }
 
+  /** The underlying Hono instance backing this router. */
   get nativeRouter(): Hono {
     return this.#router;
   }
 
+  /** The {@link OpenApi} document accumulated from registered actions. */
   get nativeApiDocs(): OpenApi {
     return this.#apiDocs;
   }
 
+  /** Nest another {@link Router}, merging its routes and OpenAPI metadata. */
   addSubRouter(router: Router) {
     this.#router.route("/", router.#router);
     this.#apiDocs.addSubOpenApi({
@@ -71,6 +133,15 @@ export class Router {
     });
   }
 
+  /**
+   * Register an {@link Action}: wire its HTTP route handler and add its
+   * OpenAPI metadata to the document.
+   *
+   * The handler's {@link Result} is mapped onto the response automatically —
+   * `204` and `3xx` results send an empty body, other success results send
+   * `data` as JSON, and error results send `{ error }` with the result's
+   * status. A thrown error is caught and returned as `500`.
+   */
   addAction<T extends JsonType>(action: Action<T>) {
     const method = this.getMethod(action.method);
     method(action.path, this.actionHandler(action.handler));
@@ -125,6 +196,7 @@ export class Router {
     };
   }
 
+  /** Register a middleware applied to every route on this router. */
   addMiddleware(
     fn: (context: Context, next: Next) => Promise<void | Response>,
   ) {
